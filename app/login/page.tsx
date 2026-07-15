@@ -1,7 +1,13 @@
-import { signIn } from '../../auth';
+import { auth, signIn } from '../../auth';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const session = await auth();
+  if (session) {
+    redirect('/');
+  }
+
   return (
     <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div className="glass-panel animate-fade-in" style={{ padding: '3rem', maxWidth: '450px', width: '100%', textAlign: 'center' }}>
@@ -24,7 +30,7 @@ export default function LoginPage() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <form action={async () => {
             'use server';
-            await signIn('discord');
+            await signIn('discord', { redirectTo: '/' });
           }}>
             <button 
               type="submit" 
