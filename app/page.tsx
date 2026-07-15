@@ -72,7 +72,7 @@ export default async function Home() {
 
       {/* Popular Titles */}
       <div style={{ marginTop: '3rem' }}>
-        <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', borderLeft: '4px solid #f5c518', paddingLeft: '0.75rem' }}>Popular Titles</h2>
+        <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', borderLeft: '4px solid var(--color-primary)', paddingLeft: '0.75rem' }}>Popular Titles</h2>
         <div className="grid-cards" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))' }}>
         {popularGames.map(game => (
           <GameCard 

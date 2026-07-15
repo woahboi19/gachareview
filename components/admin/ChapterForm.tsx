@@ -188,7 +188,7 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
           <div key={chapter.id} className="glass-panel" style={{ padding: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <p style={{ color: 'var(--color-primary)', fontSize: '0.8rem', textTransform: 'uppercase', fontWeight: 800, marginBottom: '0.2rem' }}>
-                {chapter.game.title} - {chapter.category || 'Main Story'} {chapter.isMain && <span style={{ color: '#f5c518' }}>(Main)</span>} - Ch. {chapter.chapterNum}
+                {chapter.game.title} - {chapter.category || 'Main Story'} {chapter.isMain && <span style={{ color: 'var(--color-primary)' }}>(Main)</span>} - Ch. {chapter.chapterNum}
               </p>
               <h3 style={{ fontSize: '1.2rem', marginBottom: '0.2rem' }}>{chapter.title}</h3>
             </div>

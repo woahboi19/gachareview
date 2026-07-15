@@ -6,9 +6,9 @@
   --color-surface: #1a1a1a; /* Solid dark grey surface */
   --color-surface-hover: #2a2a2a;
   --color-surface-border: #333333;
-  --color-primary: #f5c518; /* Cinematic Gold / Yellow */
-  --color-primary-glow: rgba(245, 197, 24, 0.2);
-  --color-secondary: #f5c518;
+  --color-primary: #d946ef; /* Vibrant Neon Fuchsia/Purple */
+  --color-primary-glow: rgba(217, 70, 239, 0.2);
+  --color-secondary: #8b5cf6; /* Neon Violet */
   
   --color-text-main: #ffffff;
   --color-text-muted: #b3b3b3;
@@ -33,7 +33,7 @@ body.light-theme {
   --color-surface-border: #e0e0e0;
   --color-text-main: #121212;
   --color-text-muted: #666666;
-  --color-primary: #d4a000;
+  --color-primary: #c026d3; /* Fuchsia 600 for light mode */
   --shadow-glass: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -122,8 +122,8 @@ button {
 }
 
 .btn-primary {
-  background: var(--color-primary);
-  color: #000; /* Dark text on gold */
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  color: #fff; /* White text on neon */
 }
 
 .btn-primary:hover {
@@ -199,5 +199,7 @@ button {
 
 /* Text Highlights */
 .text-gradient {
-  color: var(--color-primary);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }

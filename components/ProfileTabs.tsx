@@ -84,9 +84,9 @@ export default function ProfileTabs({ user, isOwnProfile }: ProfileTabsProps) {
         <button 
           onClick={() => setActiveTab('reviews')}
           style={{
-            background: 'none', border: 'none', color: activeTab === 'reviews' ? '#f5c518' : 'var(--color-text-muted)',
+            background: 'none', border: 'none', color: activeTab === 'reviews' ? 'var(--color-primary)' : 'var(--color-text-muted)',
             fontSize: '1.2rem', fontWeight: activeTab === 'reviews' ? 'bold' : 'normal', cursor: 'pointer',
-            borderBottom: activeTab === 'reviews' ? '2px solid #f5c518' : 'none', paddingBottom: '0.2rem'
+            borderBottom: activeTab === 'reviews' ? '2px solid var(--color-primary)' : 'none', paddingBottom: '0.2rem'
           }}
         >
           Reviews ({user.reviews.length})

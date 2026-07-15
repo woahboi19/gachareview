@@ -47,8 +47,8 @@ export default async function GamePage({ params }: GamePageProps) {
   let totalRating = 0;
   let totalReviews = 0;
 
-  game.chapters.forEach(chapter => {
-    chapter.reviews.forEach(review => {
+  game.chapters.forEach((chapter: any) => {
+    chapter.reviews.forEach((review: any) => {
       totalRating += review.rating;
       totalReviews += 1;
     });
