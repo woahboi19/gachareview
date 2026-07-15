@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GachaReview 🌟
 
-## Getting Started
+GachaReview is a comprehensive story database and review platform dedicated to popular Gacha games (like Genshin Impact, Honkai: Star Rail, and Zenless Zone Zero). 
 
-First, run the development server:
+The platform allows players to catch up on story summaries, track chapters, and share their reviews and ratings for individual story arcs with the community.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Features
+
+- **Story Database:** Complete, categorized archive of story chapters, arcs, and missions across multiple Gacha titles.
+- **Community Reviews & Ratings:** Users can write reviews, leave a star rating, and upvote helpful community reviews.
+- **Spoiler Protection:** Built-in spoiler blur for reviews to protect players who haven't completed the story yet.
+- **Personalized Profiles:** Users can track their favorite games, view their past reviews, and customize their display name and avatar.
+- **Dynamic Auto-Translation:** One-click translation for user reviews, seamlessly adapting to the user's browser language.
+- **Cinematic UI:** Beautiful glassmorphism design with a toggleable Dark / Light theme.
+
+## 🛠️ Tech Stack
+
+- **Framework:** [Next.js](https://nextjs.org/) (App Router)
+- **Database ORM:** [Prisma](https://www.prisma.io/)
+- **Authentication:** [NextAuth.js](https://next-auth.js.org/) (Discord & Google OAuth)
+- **Styling:** Vanilla CSS with CSS Variables for dynamic theming
+- **Translation API:** google-translate-api-x
+
+## 💻 Getting Started Locally
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-username/gachareview.git
+   cd gachareview
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up Environment Variables**
+   Create a `.env` file in the root directory and add the following:
+   ```env
+   # SQLite for local development (Change to Postgres URL for production)
+   DATABASE_URL="file:./dev.db"
+
+   # NextAuth
+   NEXTAUTH_URL="http://localhost:3000"
+   NEXTAUTH_SECRET="your_super_secret_string"
+
+   # OAuth Providers (Optional for local testing if using Credentials)
+   DISCORD_CLIENT_ID="your_discord_id"
+   DISCORD_CLIENT_SECRET="your_discord_secret"
+   ```
+
+4. **Initialize Database**
+   ```bash
+   npx prisma db push
+   ```
+
+5. **Run the development server**
+   ```bash
+   npm run dev
+   ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📦 Deployment
+This project is fully optimized to be deployed on **Vercel**. 
+*Note: If deploying to a serverless environment like Vercel, ensure you switch the Prisma database provider from `sqlite` to `postgresql` (e.g., using Supabase or Neon).*

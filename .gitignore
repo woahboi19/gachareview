@@ -45,3 +45,8 @@ next-env.d.ts
 # database files
 *.db
 *.sqlite
+*.db-journal
+
+# backup and scratch scripts
+backup.json
+scratch/
