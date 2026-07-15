@@ -17,6 +17,7 @@ interface Chapter {
   imageUrl: string | null;
   category: string;
   isMain: boolean;
+  createdAt?: string | Date;
   game: { title: string };
 }
 
@@ -29,6 +30,7 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
   const [imageUrl, setImageUrl] = useState('');
   const [category, setCategory] = useState('Main Story');
   const [isMain, setIsMain] = useState(false);
+  const [createdAt, setCreatedAt] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -44,7 +46,7 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ gameId, title, chapterNum, summary, imageUrl, category, isMain })
+        body: JSON.stringify({ gameId, title, chapterNum, summary, imageUrl, category, isMain, createdAt: createdAt || undefined })
       });
 
       if (res.ok) {
@@ -75,6 +77,7 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
     setImageUrl('');
     setCategory('Main Story');
     setIsMain(false);
+    setCreatedAt('');
   };
 
   const startEdit = (chapter: Chapter) => {
@@ -86,6 +89,12 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
     setImageUrl(chapter.imageUrl || '');
     setCategory(chapter.category || 'Main Story');
     setIsMain(chapter.isMain || false);
+    
+    if (chapter.createdAt) {
+      setCreatedAt(new Date(chapter.createdAt).toISOString().split('T')[0]);
+    } else {
+      setCreatedAt('');
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -151,10 +160,17 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
               <label htmlFor="isMain" className="form-label" style={{ margin: 0 }}>This is a Main Story category (Appears at top of Game Page)</label>
             </div>
 
-            <div className="form-group">
-              <label className="form-label">Image URL (Optional)</label>
-              <input type="text" className="form-textarea" style={{ minHeight: '40px' }} value={imageUrl} onChange={e => setImageUrl(e.target.value)} />
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <div className="form-group" style={{ flex: 1 }}>
+                <label className="form-label">Image URL (Optional)</label>
+                <input type="text" className="form-textarea" style={{ minHeight: '40px' }} value={imageUrl} onChange={e => setImageUrl(e.target.value)} />
+              </div>
+              <div className="form-group" style={{ width: '200px' }}>
+                <label className="form-label">Release Date (Optional)</label>
+                <input type="date" className="form-textarea" style={{ minHeight: '40px', colorScheme: 'dark' }} value={createdAt} onChange={e => setCreatedAt(e.target.value)} />
+              </div>
             </div>
+
             <div className="form-group">
               <label className="form-label">Summary / Description</label>
               <textarea className="form-textarea" value={summary} onChange={e => setSummary(e.target.value)} required />

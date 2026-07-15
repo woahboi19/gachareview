@@ -10,22 +10,28 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { gameId, title, chapterNum, summary, imageUrl, category, isMain } = body;
+    const { gameId, title, chapterNum, summary, imageUrl, category, isMain, createdAt } = body;
 
     if (!gameId || !title || !chapterNum || !summary) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    const chapterData: any = {
+      gameId,
+      title,
+      chapterNum: parseInt(chapterNum),
+      summary,
+      imageUrl: imageUrl || null,
+      category: category || 'Main Story',
+      isMain: isMain || false,
+    };
+
+    if (createdAt) {
+      chapterData.createdAt = new Date(createdAt);
+    }
+
     const chapter = await prisma.storyChapter.create({
-      data: {
-        gameId,
-        title,
-        chapterNum: parseInt(chapterNum),
-        summary,
-        imageUrl: imageUrl || null,
-        category: category || 'Main Story',
-        isMain: isMain || false
-      },
+      data: chapterData,
       include: {
         game: true
       }

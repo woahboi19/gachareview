@@ -52,28 +52,44 @@ export default function HeroCarousel({ chapters }: HeroCarouselProps) {
 
   return (
     <div style={{ position: 'relative', width: '100%', maxWidth: '1200px', margin: '0 auto 2rem', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 12px 24px rgba(0,0,0,0.6)' }}>
-      {/* Background Image Container */}
+      {/* Blurred Background Layer */}
       <div 
         style={{
           position: 'absolute',
-          top: 0, left: 0, right: 0, bottom: 0,
+          top: -20, left: -20, right: -20, bottom: -20, // Hide blur edges
           backgroundImage: `url(${bgImage})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
+          filter: 'blur(20px) brightness(0.5)',
           transition: 'background-image 0.5s ease-in-out',
           zIndex: 0
         }}
-      >
-        {/* Gradient Overlay for text readability */}
-        <div style={{
+      />
+
+      {/* Contained Image Layer (Right aligned) */}
+      <div 
+        style={{
           position: 'absolute',
-          top: 0, left: 0, right: 0, bottom: 0,
-          background: 'linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.3) 100%)',
-        }} />
-      </div>
+          top: 0, left: '30%', right: 0, bottom: 0, // Constrain to right side to avoid overlapping text completely
+          backgroundImage: `url(${bgImage})`,
+          backgroundSize: 'contain',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'right center',
+          transition: 'background-image 0.5s ease-in-out',
+          zIndex: 1
+        }}
+      />
+
+      {/* Gradient Overlay for text readability */}
+      <div style={{
+        position: 'absolute',
+        top: 0, left: 0, right: 0, bottom: 0,
+        background: 'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 45%, rgba(0,0,0,0) 100%)',
+        zIndex: 2
+      }} />
 
       {/* Main Content Window */}
-      <div style={{ position: 'relative', zIndex: 1, padding: '4rem 3rem', height: '420px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+      <div style={{ position: 'relative', zIndex: 3, padding: '4rem 3rem', height: '420px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         
         {/* Arrows */}
         {chapters.length > 1 && (
@@ -129,13 +145,35 @@ export default function HeroCarousel({ chapters }: HeroCarouselProps) {
             </span>
           </div>
 
-          <h2 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '0.5rem', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
-            <span style={{ color: 'var(--color-primary)', marginRight: '0.5rem' }}>S1.E{activeChapter.chapterNum}</span>
-            <br />
+          <div style={{ color: 'var(--color-primary)', fontWeight: 'bold', fontSize: '1.2rem', marginBottom: '0.2rem', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+            S1.E{activeChapter.chapterNum}
+          </div>
+          <h2 style={{ 
+            color: '#fff',
+            fontSize: '2.5rem', 
+            fontWeight: 800, 
+            marginBottom: '0.5rem', 
+            textShadow: '0 2px 4px rgba(0,0,0,0.5)', 
+            height: '96px', 
+            display: '-webkit-box', 
+            WebkitLineClamp: 2, 
+            WebkitBoxOrient: 'vertical', 
+            overflow: 'hidden' 
+          }}>
             {activeChapter.title}
           </h2>
           
-          <p style={{ color: '#ddd', fontSize: '1.05rem', lineHeight: 1.6, marginBottom: '2rem', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+          <p style={{ 
+            color: '#ddd', 
+            fontSize: '1.05rem', 
+            lineHeight: 1.6, 
+            marginBottom: '2rem', 
+            height: '80px', 
+            display: '-webkit-box', 
+            WebkitLineClamp: 3, 
+            WebkitBoxOrient: 'vertical', 
+            overflow: 'hidden' 
+          }}>
             {activeChapter.summary}
           </p>
 

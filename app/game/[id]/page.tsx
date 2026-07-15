@@ -1,6 +1,8 @@
 import { prisma } from '../../../lib/prisma';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { auth } from '../../../auth';
+import FavoriteButton from '../../../components/FavoriteButton';
 
 interface GamePageProps {
   params: Promise<{ id: string }>;
@@ -23,6 +25,22 @@ export default async function GamePage({ params }: GamePageProps) {
 
   if (!game) {
     notFound();
+  }
+
+  const session = await auth();
+  const userId = session?.user?.id;
+  
+  let isFavorited = false;
+  if (userId) {
+    const favorite = await prisma.favoriteGame.findUnique({
+      where: {
+        userId_gameId: {
+          userId,
+          gameId: id
+        }
+      }
+    });
+    isFavorited = !!favorite;
   }
 
   // Calculate game overall rating
@@ -62,7 +80,7 @@ export default async function GamePage({ params }: GamePageProps) {
       {/* Cinematic Header */}
       <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start', flexWrap: 'wrap', marginBottom: '3rem', marginTop: '1rem' }}>
         {game.imageUrl && (
-          <div style={{ flex: '0 0 250px', aspectRatio: '9/16', borderRadius: 'var(--radius-md)', overflow: 'hidden', boxShadow: '0 8px 16px rgba(0,0,0,0.8)', display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#000' }}>
+          <div style={{ flex: '0 0 250px', aspectRatio: '9/16', borderRadius: 'var(--radius-md)', overflow: 'hidden', boxShadow: '0 8px 16px rgba(0,0,0,0.3)', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'var(--color-surface-border)' }}>
             <img src={game.imageUrl} alt={game.title} style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block', objectPosition: 'center' }} />
           </div>
         )}
@@ -70,7 +88,10 @@ export default async function GamePage({ params }: GamePageProps) {
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div>
-                <h1 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '0.2rem' }}>{game.title}</h1>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.2rem' }}>
+                  <h1 style={{ fontSize: '3rem', fontWeight: 800, margin: 0 }}>{game.title}</h1>
+                  <FavoriteButton gameId={game.id} initialIsFavorited={isFavorited} isLoggedIn={!!session} />
+                </div>
                 <p style={{ color: 'var(--color-primary)', fontWeight: '600', marginBottom: '1.5rem', fontSize: '1.1rem' }}>{game.developer}</p>
               </div>
               {/* IMDB Style Rating Widget */}
@@ -89,10 +110,7 @@ export default async function GamePage({ params }: GamePageProps) {
               </div>
             </div>
             
-            <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
-              <span style={{ background: '#333', padding: '0.25rem 0.75rem', borderRadius: '4px', fontSize: '0.85rem' }}>Story Rich</span>
-              <span style={{ background: '#333', padding: '0.25rem 0.75rem', borderRadius: '4px', fontSize: '0.85rem' }}>RPG</span>
-            </div>
+
             <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem', lineHeight: 1.6 }}>{game.description}</p>
           </div>
         </div>
@@ -124,7 +142,7 @@ export default async function GamePage({ params }: GamePageProps) {
                           </h3>
                           <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', margin: 0 }}>{chapter.summary.substring(0, 120)}...</p>
                         </div>
-                        <div style={{ color: chapAvg ? '#fff' : 'var(--color-primary)', fontSize: '1.2rem', fontWeight: chapAvg ? 'bold' : 'normal', display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+                        <div style={{ color: chapAvg ? 'var(--color-text-main)' : 'var(--color-primary)', fontSize: '1.2rem', fontWeight: chapAvg ? 'bold' : 'normal', display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
                           {chapAvg ? (
                             <>
                               <span style={{ color: '#f5c518' }}>★</span> {chapAvg}

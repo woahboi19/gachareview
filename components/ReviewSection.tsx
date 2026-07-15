@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import type { Session } from 'next-auth';
 import RatingStars from './RatingStars';
+import TranslateButton from './TranslateButton';
 
 interface Review {
   id: string;
@@ -41,6 +42,9 @@ export default function ReviewSection({ chapterId, initialReviews, session }: Re
 
   // Spoilers state (which reviews are revealed)
   const [revealedSpoilers, setRevealedSpoilers] = useState<Set<string>>(new Set());
+
+  // Translations state
+  const [translatedTexts, setTranslatedTexts] = useState<Record<string, string>>({});
 
   const [modal, setModal] = useState<{
     isOpen: boolean;
@@ -348,9 +352,11 @@ export default function ReviewSection({ chapterId, initialReviews, session }: Re
                   <p style={{ 
                     filter: !isSpoilerVisible ? 'blur(8px)' : 'none', 
                     transition: 'filter 0.3s ease',
-                    userSelect: !isSpoilerVisible ? 'none' : 'auto'
+                    userSelect: !isSpoilerVisible ? 'none' : 'auto',
+                    whiteSpace: 'pre-wrap',
+                    color: 'var(--color-text-main)'
                   }}>
-                    {review.content}
+                    {translatedTexts[review.id] || review.content}
                   </p>
                   {!isSpoilerVisible && (
                     <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -361,8 +367,23 @@ export default function ReviewSection({ chapterId, initialReviews, session }: Re
                   )}
                 </div>
                 
-                {/* Upvote Button */}
-                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
+                {/* Upvote Button and Translate */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem' }}>
+                  <TranslateButton 
+                    originalText={review.content} 
+                    onTranslated={(text) => {
+                      if (text) {
+                        setTranslatedTexts(prev => ({ ...prev, [review.id]: text }));
+                      } else {
+                        setTranslatedTexts(prev => {
+                          const next = { ...prev };
+                          delete next[review.id];
+                          return next;
+                        });
+                      }
+                    }} 
+                  />
+
                   <button 
                     onClick={() => handleUpvote(review.id)}
                     style={{ 

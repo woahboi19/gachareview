@@ -33,7 +33,8 @@ export async function PUT(request: Request, props: { params: Promise<{ id: strin
         isSpoiler: isSpoiler || false,
       },
       include: {
-        user: true
+        user: true,
+        upvotes: true
       }
     });
 

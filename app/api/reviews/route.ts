@@ -16,16 +16,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    // Get gameId from chapter to link the review properly
+    const chapter = await prisma.storyChapter.findUnique({
+      where: { id: chapterId },
+      select: { gameId: true }
+    });
+
     const review = await prisma.review.create({
       data: {
         rating,
         content,
         isSpoiler: isSpoiler || false,
         chapterId,
+        gameId: chapter?.gameId,
         userId: session.user.id
       },
       include: {
-        user: true
+        user: true,
+        upvotes: true
       }
     });
 
