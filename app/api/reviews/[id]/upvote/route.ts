@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 import { prisma } from '../../../../../lib/prisma';
 import { auth } from '../../../../../auth';
 
@@ -39,6 +40,8 @@ export async function POST(
       await prisma.upvote.delete({
         where: { id: existingUpvote.id }
       });
+      if (review.gameId) revalidateTag(`game-${review.gameId}`);
+      revalidateTag(`chapter-${review.chapterId}`);
       return NextResponse.json({ action: 'removed' });
     } else {
       // Toggle on: Create upvote
@@ -48,6 +51,8 @@ export async function POST(
           reviewId: id
         }
       });
+      if (review.gameId) revalidateTag(`game-${review.gameId}`);
+      revalidateTag(`chapter-${review.chapterId}`);
       return NextResponse.json({ action: 'added' });
     }
 

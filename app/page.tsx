@@ -1,4 +1,5 @@
 import { prisma } from '../lib/prisma';
+import { getCachedPopularGames, getCachedAllGames, getCachedRecentChapters } from '../lib/data';
 import GameCard from '../components/GameCard';
 import HeroCarousel from '../components/HeroCarousel';
 import { auth } from '../auth';
@@ -19,24 +20,9 @@ export default async function Home() {
     favoriteGames = favorites.map(f => f.game);
   }
 
-  const popularGames = await prisma.game.findMany({
-    take: 5,
-    orderBy: {
-      favoritedBy: {
-        _count: 'desc'
-      }
-    }
-  });
-
-  const allGames = await prisma.game.findMany({
-    orderBy: { title: 'asc' }
-  });
-
-  const recentChapters = await prisma.storyChapter.findMany({
-    orderBy: { createdAt: 'desc' },
-    take: 6,
-    include: { game: true }
-  });
+  const popularGames = await getCachedPopularGames();
+  const allGames = await getCachedAllGames();
+  const recentChapters = await getCachedRecentChapters();
 
   return (
     <div>

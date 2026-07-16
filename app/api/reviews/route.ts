@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 import { prisma } from '../../../lib/prisma';
 import { auth } from '../../../auth';
 
@@ -36,6 +37,8 @@ export async function POST(request: Request) {
         upvotes: true
       }
     });
+    if (chapter?.gameId) revalidateTag(`game-${chapter.gameId}`);
+    revalidateTag(`chapter-${chapterId}`);
 
     return NextResponse.json(review, { status: 201 });
   } catch (error: any) {

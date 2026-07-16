@@ -1,4 +1,5 @@
 import { prisma } from '../../../lib/prisma';
+import { getCachedGame } from '../../../lib/data';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { auth } from '../../../auth';
@@ -11,17 +12,7 @@ interface GamePageProps {
 export default async function GamePage({ params }: GamePageProps) {
   const { id } = await params;
   
-  const game = await prisma.game.findUnique({
-    where: { id },
-    include: {
-      chapters: {
-        orderBy: { chapterNum: 'asc' },
-        include: {
-          reviews: true
-        }
-      }
-    }
-  });
+  const game = await getCachedGame(id);
 
   if (!game) {
     notFound();

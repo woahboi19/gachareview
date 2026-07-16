@@ -1,4 +1,5 @@
 import { prisma } from '../../../../../lib/prisma';
+import { getCachedChapter } from '../../../../../lib/data';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import ReviewSection from '../../../../../components/ReviewSection';
@@ -12,16 +13,7 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
   const { id, chapterId } = await params;
   const session = await auth();
 
-  const chapter = await prisma.storyChapter.findUnique({
-    where: { id: chapterId },
-    include: {
-      game: true,
-      reviews: {
-        orderBy: { createdAt: 'desc' },
-        include: { user: true, upvotes: true }
-      }
-    }
-  });
+  const chapter = await getCachedChapter(chapterId);
 
   if (!chapter || chapter.gameId !== id) {
     notFound();
