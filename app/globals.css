@@ -217,16 +217,19 @@ button {
   /* Navbar Adjustments */
   .navbar {
     padding: 1rem !important;
-    flex-direction: column;
-    gap: 1rem;
-    align-items: stretch !important;
+    gap: 0.5rem;
   }
   .navbar-left, .navbar-right {
-    justify-content: space-between;
-    width: 100%;
+    width: auto;
+    gap: 0.5rem !important;
   }
   .navbar-title, .navbar-username {
     display: none !important;
+  }
+  
+  /* Search Bar Adjustments */
+  .search-wrapper {
+    width: 180px !important;
   }
   
   /* Hero Carousel Adjustments */
@@ -260,8 +263,8 @@ button {
 
   /* Grid Layouts */
   .grid-cards {
-    grid-template-columns: 1fr !important;
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+    gap: 1rem;
   }
   
   .glass-panel {
