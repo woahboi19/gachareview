@@ -38,8 +38,8 @@ export async function PUT(request: Request, props: { params: Promise<{ id: strin
         upvotes: true
       }
     });
-    if (existingReview.gameId) revalidateTag(`game-${existingReview.gameId}`);
-    revalidateTag(`chapter-${existingReview.chapterId}`);
+    if (existingReview.gameId) revalidateTag(`game-${existingReview.gameId}`, {});
+    revalidateTag(`chapter-${existingReview.chapterId}`, {});
 
     return NextResponse.json(updatedReview, { status: 200 });
   } catch (error) {
@@ -72,8 +72,8 @@ export async function DELETE(request: Request, props: { params: Promise<{ id: st
     await prisma.review.delete({
       where: { id: params.id }
     });
-    if (existingReview.gameId) revalidateTag(`game-${existingReview.gameId}`);
-    revalidateTag(`chapter-${existingReview.chapterId}`);
+    if (existingReview.gameId) revalidateTag(`game-${existingReview.gameId}`, {});
+    revalidateTag(`chapter-${existingReview.chapterId}`, {});
 
     return new NextResponse(null, { status: 204 });
   } catch (error) {
