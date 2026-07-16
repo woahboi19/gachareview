@@ -217,19 +217,22 @@ button {
   /* Navbar Adjustments */
   .navbar {
     padding: 1rem !important;
-    gap: 0.5rem;
-  }
-  .navbar-left, .navbar-right {
-    width: auto;
-    gap: 0.5rem !important;
   }
   .navbar-title, .navbar-username {
     display: none !important;
   }
   
-  /* Search Bar Adjustments */
+  /* Force search bar to new line on mobile */
+  .search-container {
+    order: 3 !important;
+    flex-basis: 100% !important;
+    margin-top: 0.5rem;
+  }
   .search-wrapper {
-    width: 180px !important;
+    width: 100% !important;
+  }
+  .navbar-actions {
+    order: 2 !important;
   }
   
   /* Hero Carousel Adjustments */
@@ -269,6 +272,18 @@ button {
   
   .glass-panel {
     padding: 1.5rem 1rem !important;
+  }
+  
+  /* GameCard adjustments */
+  .gamecard-content {
+    padding: 0.75rem !important;
+  }
+  .gamecard-title {
+    font-size: 1.1rem !important;
+    margin-bottom: 0.25rem !important;
+  }
+  .gamecard-desc {
+    font-size: 0.8rem !important;
   }
 }
 

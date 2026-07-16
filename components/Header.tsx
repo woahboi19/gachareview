@@ -15,9 +15,8 @@ export default function Header({ session }: HeaderProps) {
   };
 
   return (
-    <header className="navbar" style={{ background: 'var(--color-surface)', borderBottom: '1px solid var(--color-surface-border)', padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <div className="navbar-left" style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-        <Link href="/">
+    <header className="navbar" style={{ background: 'var(--color-surface)', borderBottom: '1px solid var(--color-surface-border)', padding: '1rem 2rem', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '1rem' }}>
+      <Link href="/" style={{ order: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
             <span style={{ background: 'var(--color-primary)', color: '#000', padding: '0.2rem 0.6rem', borderRadius: '4px', fontWeight: 900, fontSize: '1.4rem', letterSpacing: '-0.5px' }}>
               GR
@@ -25,9 +24,12 @@ export default function Header({ session }: HeaderProps) {
             <h1 className="navbar-title" style={{ margin: 0, fontSize: '1.4rem', fontWeight: 700, color: 'var(--color-text-main)' }}>GachaReview</h1>
           </div>
         </Link>
+      
+      <div className="search-container" style={{ order: 2, flex: 1, display: 'flex', justifyContent: 'center' }}>
         <SearchBar />
       </div>
-      <div className="navbar-right" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+
+      <div className="navbar-actions" style={{ order: 3, display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
         {session?.user ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             {session.user.role === 'ADMIN' && (

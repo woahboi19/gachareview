@@ -16,9 +16,9 @@ export default function GameCard({ id, title, description, imageUrl }: GameCardP
             <img src={imageUrl} alt={title} style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center' }} />
           </div>
         )}
-        <div style={{ padding: '1.5rem', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-          <h3 style={{ marginBottom: '0.5rem', fontSize: '1.25rem', color: 'var(--color-text-main)' }}>{title}</h3>
-          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', flexGrow: 1, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{description}</p>
+        <div className="gamecard-content" style={{ padding: '1.5rem', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+          <h3 className="gamecard-title" style={{ marginBottom: '0.5rem', fontSize: '1.25rem', color: 'var(--color-text-main)' }}>{title}</h3>
+          <p className="gamecard-desc" style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', flexGrow: 1, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{description}</p>
         </div>
       </div>
     </Link>
