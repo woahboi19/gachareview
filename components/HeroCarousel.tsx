@@ -51,7 +51,7 @@ export default function HeroCarousel({ chapters }: HeroCarouselProps) {
   const bgImage = activeChapter.imageUrl || activeChapter.game.imageUrl || 'https://images.unsplash.com/photo-1618336362047-9dc49b788019?q=80&w=1200&auto=format&fit=crop';
 
   return (
-    <div style={{ position: 'relative', width: '100%', maxWidth: '1200px', margin: '0 auto 2rem', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 12px 24px rgba(0,0,0,0.6)' }}>
+    <div className="carousel-wrapper" style={{ position: 'relative', width: '100%', maxWidth: '1200px', margin: '0 auto 2rem', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 12px 24px rgba(0,0,0,0.6)' }}>
       {/* Blurred Background Layer */}
       <div 
         style={{
@@ -68,6 +68,7 @@ export default function HeroCarousel({ chapters }: HeroCarouselProps) {
 
       {/* Contained Image Layer (Right aligned) */}
       <div 
+        className="carousel-image"
         style={{
           position: 'absolute',
           top: 0, left: '30%', right: 0, bottom: 0, // Constrain to right side to avoid overlapping text completely
@@ -89,7 +90,7 @@ export default function HeroCarousel({ chapters }: HeroCarouselProps) {
       }} />
 
       {/* Main Content Window */}
-      <div style={{ position: 'relative', zIndex: 3, padding: '4rem 3rem', height: '420px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+      <div className="carousel-content" style={{ position: 'relative', zIndex: 3, padding: '4rem 3rem', height: '420px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         
         {/* Arrows */}
         {chapters.length > 1 && (
@@ -127,7 +128,7 @@ export default function HeroCarousel({ chapters }: HeroCarouselProps) {
           </>
         )}
 
-        <div style={{ maxWidth: '600px', marginLeft: chapters.length > 1 ? '3rem' : '0' }}>
+        <div className="carousel-text-area" style={{ maxWidth: '600px', marginLeft: chapters.length > 1 ? '3rem' : '0' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
             <span style={{ 
               background: 'var(--color-primary)', 
@@ -148,7 +149,7 @@ export default function HeroCarousel({ chapters }: HeroCarouselProps) {
           <div style={{ color: 'var(--color-primary)', fontWeight: 'bold', fontSize: '1.2rem', marginBottom: '0.2rem', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
             S1.E{activeChapter.chapterNum}
           </div>
-          <h2 style={{ 
+          <h2 className="carousel-title" style={{ 
             color: '#fff',
             fontSize: '2.5rem', 
             fontWeight: 800, 
@@ -163,7 +164,7 @@ export default function HeroCarousel({ chapters }: HeroCarouselProps) {
             {activeChapter.title}
           </h2>
           
-          <p style={{ 
+          <p className="carousel-summary" style={{ 
             color: '#ddd', 
             fontSize: '1.05rem', 
             lineHeight: 1.6, 

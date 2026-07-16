@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-  /* Dynamic Color Palette - Cinematic/IMDB style */
+  /* Dynamic Color Palette - Cinematic style */
   --color-bg: #000000; /* Deep black background */
   --color-surface: #1a1a1a; /* Solid dark grey surface */
   --color-surface-hover: #2a2a2a;
@@ -178,7 +178,7 @@ button {
 /* Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  to { opacity: 1; transform: none; }
 }
 
 .animate-fade-in {
@@ -203,3 +203,69 @@ button {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+
+/* Mobile Responsiveness Overhaul */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+  
+  h1 { font-size: 2rem !important; }
+  h2 { font-size: 1.5rem !important; }
+  
+  /* Navbar Adjustments */
+  .navbar {
+    padding: 1rem !important;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch !important;
+  }
+  .navbar-left, .navbar-right {
+    justify-content: space-between;
+    width: 100%;
+  }
+  .navbar-title, .navbar-username {
+    display: none !important;
+  }
+  
+  /* Hero Carousel Adjustments */
+  .carousel-wrapper {
+    height: 350px !important;
+  }
+  .carousel-content {
+    padding: 2rem 1.5rem !important;
+    margin-left: 0 !important;
+    align-items: flex-start !important;
+  }
+  .carousel-text-area {
+    margin-left: 0 !important;
+    max-width: 100% !important;
+  }
+  .carousel-title {
+    font-size: 1.8rem !important;
+    height: auto !important;
+    -webkit-line-clamp: 2 !important;
+  }
+  .carousel-summary {
+    font-size: 0.95rem !important;
+    height: auto !important;
+    -webkit-line-clamp: 2 !important;
+    margin-bottom: 1.5rem !important;
+  }
+  .carousel-image {
+    background-position: center !important;
+    opacity: 0.3 !important; /* fade image to prioritize text on small screens */
+  }
+
+  /* Grid Layouts */
+  .grid-cards {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem;
+  }
+  
+  .glass-panel {
+    padding: 1.5rem 1rem !important;
+  }
+}
+

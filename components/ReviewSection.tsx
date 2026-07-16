@@ -277,7 +277,7 @@ export default function ReviewSection({ chapterId, initialReviews, session }: Re
           <div style={{ textAlign: 'center', padding: '1rem 0' }}>
             <p style={{ color: 'var(--color-text-muted)', marginBottom: '1rem' }}>You must be logged in to leave a review.</p>
             <button className="btn btn-primary" onClick={() => signIn()}>
-              Login with Discord or Google
+              Login with Discord
             </button>
           </div>
         )}

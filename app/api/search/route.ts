@@ -15,8 +15,8 @@ export async function GET(request: NextRequest) {
     const games = await prisma.game.findMany({
       where: {
         OR: [
-          { title: { contains: query } },
-          { developer: { contains: query } }
+          { title: { contains: query, mode: 'insensitive' } },
+          { developer: { contains: query, mode: 'insensitive' } }
         ]
       },
       take: 5
@@ -25,8 +25,8 @@ export async function GET(request: NextRequest) {
     const chapters = await prisma.storyChapter.findMany({
       where: {
         OR: [
-          { title: { contains: query } },
-          { summary: { contains: query } }
+          { title: { contains: query, mode: 'insensitive' } },
+          { summary: { contains: query, mode: 'insensitive' } }
         ]
       },
       include: {

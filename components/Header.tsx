@@ -15,19 +15,19 @@ export default function Header({ session }: HeaderProps) {
   };
 
   return (
-    <header style={{ background: 'var(--color-surface)', borderBottom: '1px solid var(--color-surface-border)', padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+    <header className="navbar" style={{ background: 'var(--color-surface)', borderBottom: '1px solid var(--color-surface-border)', padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="navbar-left" style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
         <Link href="/">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
             <span style={{ background: 'var(--color-primary)', color: '#000', padding: '0.2rem 0.6rem', borderRadius: '4px', fontWeight: 900, fontSize: '1.4rem', letterSpacing: '-0.5px' }}>
               GR
             </span>
-            <h1 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 700, color: 'var(--color-text-main)', display: 'none', '@media (min-width: 768px)': { display: 'block' } } as React.CSSProperties}>GachaReview</h1>
+            <h1 className="navbar-title" style={{ margin: 0, fontSize: '1.4rem', fontWeight: 700, color: 'var(--color-text-main)' }}>GachaReview</h1>
           </div>
         </Link>
         <SearchBar />
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+      <div className="navbar-right" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
         {session?.user ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             {session.user.role === 'ADMIN' && (
@@ -38,7 +38,7 @@ export default function Header({ session }: HeaderProps) {
               </Link>
             )}
             <Link href="/profile" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', padding: '0.2rem 0.5rem', borderRadius: '4px', transition: 'background 0.2s' }}>
-              <span style={{ color: 'var(--color-text-main)', fontSize: '0.9rem' }}>{session.user.name}</span>
+              <span className="navbar-username" style={{ color: 'var(--color-text-main)', fontSize: '0.9rem' }}>{session.user.name}</span>
               {session.user.image ? (
                 <img src={session.user.image} alt="Avatar" style={{ width: '32px', height: '32px', borderRadius: '50%' }} />
               ) : (
