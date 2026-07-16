@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import type { Session } from 'next-auth';
@@ -204,7 +205,7 @@ export default function ReviewSection({ chapterId, initialReviews, session }: Re
   return (
     <div style={{ marginTop: '2rem' }}>
       {/* Custom Modal */}
-      {modal.isOpen && (
+      {modal.isOpen && typeof document !== 'undefined' && createPortal(
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
           backgroundColor: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(4px)',
@@ -231,7 +232,8 @@ export default function ReviewSection({ chapterId, initialReviews, session }: Re
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       <h3 style={{ marginBottom: '1rem', fontSize: '1.5rem', fontWeight: 700 }}>Reviews & Ratings</h3>
