@@ -249,6 +249,7 @@ button {
     order: 3 !important;
     flex-basis: 100% !important;
     margin-top: 0.5rem;
+    justify-content: stretch !important;
   }
   .search-wrapper {
     width: 100% !important;

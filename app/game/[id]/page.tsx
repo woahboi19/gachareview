@@ -81,7 +81,7 @@ export default async function GamePage({ params }: GamePageProps) {
       {/* Cinematic Header */}
       <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start', flexWrap: 'wrap', marginBottom: '3rem', marginTop: '1rem' }}>
         {game.imageUrl && (
-          <div style={{ flex: '0 0 250px', aspectRatio: '1/1', borderRadius: 'var(--radius-md)', overflow: 'hidden', boxShadow: '0 8px 16px rgba(0,0,0,0.3)', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'var(--color-surface-border)' }}>
+          <div style={{ flex: '0 0 250px', aspectRatio: '3/4', borderRadius: 'var(--radius-md)', overflow: 'hidden', boxShadow: '0 8px 16px rgba(0,0,0,0.3)', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'var(--color-surface-border)' }}>
             <img src={game.imageUrl} alt={game.title} style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block', objectPosition: 'center' }} />
           </div>
         )}
