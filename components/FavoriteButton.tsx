@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { toast } from 'react-hot-toast';
 
 interface FavoriteButtonProps {
   gameId: string;
@@ -14,7 +15,7 @@ export default function FavoriteButton({ gameId, initialIsFavorited, isLoggedIn 
 
   const toggleFavorite = async () => {
     if (!isLoggedIn) {
-      alert('Please log in to favorite games.');
+      toast.error('Please log in to favorite games.');
       return;
     }
 
@@ -31,7 +32,9 @@ export default function FavoriteButton({ gameId, initialIsFavorited, isLoggedIn 
       if (!res.ok) {
         // Revert on failure
         setIsFavorited(isFavorited);
-        alert('Failed to update favorites. Please try again.');
+        toast.error('Failed to update favorites. Please try again.');
+      } else {
+        toast.success(isFavorited ? 'Removed from favorites' : 'Added to favorites');
       }
     } catch (err) {
       console.error(err);

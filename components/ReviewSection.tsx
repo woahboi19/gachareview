@@ -5,8 +5,10 @@ import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import type { Session } from 'next-auth';
+import { toast } from 'react-hot-toast';
 import RatingStars from './RatingStars';
 import TranslateButton from './TranslateButton';
+import EmptyState from './EmptyState';
 
 interface Review {
   id: string;
@@ -91,10 +93,11 @@ export default function ReviewSection({ chapterId, initialReviews, session }: Re
         setContent('');
         setRating(5);
         setIsSpoiler(false);
+        toast.success('Review submitted successfully!');
         router.refresh(); 
       } else {
         const errData = await res.json();
-        openModal('Error', errData.error || 'Failed to submit review', false);
+        toast.error(errData.error || 'Failed to submit review');
       }
     } catch (err) {
       console.error(err);
@@ -131,10 +134,11 @@ export default function ReviewSection({ chapterId, initialReviews, session }: Re
         const updatedReview = await res.json();
         setReviews(reviews.map(r => r.id === reviewId ? updatedReview : r));
         setEditingId(null);
+        toast.success('Review updated!');
         router.refresh();
       } else {
         const errData = await res.json();
-        openModal('Error', errData.error || 'Failed to update review', false);
+        toast.error(errData.error || 'Failed to update review');
       }
     } catch (err) {
       console.error(err);
@@ -153,10 +157,11 @@ export default function ReviewSection({ chapterId, initialReviews, session }: Re
 
         if (res.ok) {
           setReviews(reviews.filter(r => r.id !== reviewId));
+          toast.success('Review deleted!');
           router.refresh();
         } else {
           const errData = await res.json();
-          openModal('Error', errData.error || 'Failed to delete review', false);
+          toast.error(errData.error || 'Failed to delete review');
         }
       } catch (err) {
         console.error(err);
@@ -167,7 +172,7 @@ export default function ReviewSection({ chapterId, initialReviews, session }: Re
 
   const handleUpvote = async (reviewId: string) => {
     if (!session?.user?.id) {
-      openModal('Login Required', 'You must be logged in to like reviews.', false);
+      toast.error('You must be logged in to like reviews.');
       return;
     }
 
@@ -192,7 +197,7 @@ export default function ReviewSection({ chapterId, initialReviews, session }: Re
       if (!res.ok) {
         // Revert on failure
         setReviews(reviews);
-        openModal('Error', 'Failed to update like status', false);
+        toast.error('Failed to update like status');
       } else {
         router.refresh();
       }
@@ -288,7 +293,10 @@ export default function ReviewSection({ chapterId, initialReviews, session }: Re
       {/* Review List */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         {reviews.length === 0 ? (
-          <p style={{ color: 'var(--color-text-muted)' }}>No reviews yet. Be the first to review!</p>
+          <EmptyState 
+            title="No reviews yet" 
+            description="Be the first to share your thoughts on this chapter!" 
+          />
         ) : (
           reviews.map(review => {
             const isOwner = session?.user?.id === review.userId;

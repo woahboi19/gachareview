@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { auth } from '../../../auth';
 import FavoriteButton from '../../../components/FavoriteButton';
+import EmptyState from '../../../components/EmptyState';
 
 interface GamePageProps {
   params: Promise<{ id: string }>;
@@ -118,7 +119,10 @@ export default async function GamePage({ params }: GamePageProps) {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
         {sortedCategories.length === 0 ? (
-          <p style={{ color: 'var(--color-text-muted)' }}>No chapters available yet.</p>
+          <EmptyState 
+            title="No chapters yet" 
+            description="There are currently no chapters available for this game. Check back later!" 
+          />
         ) : (
           sortedCategories.map(([category, chapters]) => (
             <div key={category}>
