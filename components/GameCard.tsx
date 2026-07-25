@@ -13,7 +13,7 @@ export default function GameCard({ id, title, description, imageUrl }: GameCardP
       <div className="glass-panel animate-fade-in card-hover" style={{ padding: '0', height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         {imageUrl && (
           <div style={{ width: '100%', aspectRatio: '9/16', overflow: 'hidden', background: 'var(--color-surface-border)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <img src={imageUrl} alt={title} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} />
+            <img src={imageUrl} alt={title} style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center' }} />
           </div>
         )}
         <div className="gamecard-content" style={{ padding: '1.5rem', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>

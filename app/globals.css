@@ -252,6 +252,7 @@ button {
   }
   .search-wrapper {
     width: 100% !important;
+    max-width: 100% !important;
   }
   .navbar-actions {
     order: 2 !important;
