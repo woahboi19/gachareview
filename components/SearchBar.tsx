@@ -56,7 +56,7 @@ export default function SearchBar() {
   const hasResults = results.games.length > 0 || results.chapters.length > 0;
 
   return (
-    <div ref={wrapperRef} className="search-wrapper" style={{ position: 'relative', width: '100%', maxWidth: '300px' }}>
+    <div ref={wrapperRef} className="search-wrapper" style={{ position: 'relative', width: '100%', maxWidth: '450px' }}>
       <div style={{ position: 'relative' }}>
         <input
           type="text"

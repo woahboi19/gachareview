@@ -37,7 +37,7 @@ export default function Header({ session }: HeaderProps) {
           </div>
         </Link>
       
-      <div className="search-container" style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+      <div className="search-container" style={{ flex: 1, display: 'flex', justifyContent: 'flex-start', marginLeft: '2rem' }}>
         <SearchBar />
       </div>
 
