@@ -89,6 +89,7 @@ model StoryChapter {
   imageUrl    String?  // Optional image for the chapter
   category    String   @default("Main Story")
   isMain      Boolean  @default(false)
+  releaseDate DateTime?
   game        Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
   reviews     Review[]
   createdAt   DateTime @default(now())

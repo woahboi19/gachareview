@@ -33,7 +33,7 @@ export default async function Home() {
   });
 
   const recentChapters = await prisma.storyChapter.findMany({
-    orderBy: { createdAt: 'desc' },
+    orderBy: { releaseDate: 'desc' },
     take: 6,
     include: { game: true }
   });

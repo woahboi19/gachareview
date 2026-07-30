@@ -46,7 +46,7 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
 
       <div style={{ padding: '2rem 0', borderBottom: '1px solid var(--color-surface-border)' }}>
         <h1 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '0.5rem' }}>
-          Chapter {chapter.chapterNum}: {chapter.title}
+          {chapter.title}
         </h1>
         <p style={{ color: 'var(--color-primary)', fontSize: '1.2rem', marginBottom: '2rem', fontWeight: 600 }}>
           {chapter.game.title}

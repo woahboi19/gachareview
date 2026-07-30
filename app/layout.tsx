@@ -22,6 +22,7 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   title: "Gacha Review",
   description: "Review your favorite gacha game stories",
+  referrer: 'no-referrer',
 };
 
 export default async function RootLayout({

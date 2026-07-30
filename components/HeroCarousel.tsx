@@ -20,6 +20,7 @@ interface Chapter {
   summary: string;
   imageUrl: string | null;
   createdAt: Date;
+  releaseDate: Date | null;
   game: Game;
 }
 
@@ -116,13 +117,13 @@ export default function HeroCarousel({ chapters }: HeroCarouselProps) {
                       {chapter.game.title}
                     </span>
                     <span style={{ color: '#ccc', fontSize: '0.9rem' }}>
-                      {new Date(chapter.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                      {chapter.releaseDate 
+                        ? new Date(chapter.releaseDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+                        : new Date(chapter.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                     </span>
                   </div>
 
-                  <div style={{ color: 'var(--color-primary)', fontWeight: 'bold', fontSize: '1.2rem', marginBottom: '0.2rem', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
-                    S1.E{chapter.chapterNum}
-                  </div>
+
                   <h2 className="carousel-title" style={{ 
                     color: '#fff',
                     fontSize: '2.5rem', 

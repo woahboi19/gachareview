@@ -18,7 +18,7 @@ interface Chapter {
   category: string;
   isMain: boolean;
   slug?: string;
-  createdAt?: string | Date;
+  releaseDate?: string | Date;
   game: { title: string };
 }
 
@@ -32,7 +32,7 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
   const [imageUrl, setImageUrl] = useState('');
   const [category, setCategory] = useState('Main Story');
   const [isMain, setIsMain] = useState(false);
-  const [createdAt, setCreatedAt] = useState('');
+  const [releaseDate, setReleaseDate] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -48,7 +48,7 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ gameId, title, shortCode, chapterNum, summary, imageUrl, category, isMain, createdAt: createdAt || undefined })
+        body: JSON.stringify({ gameId, title, shortCode, chapterNum, summary, imageUrl, category, isMain, releaseDate: releaseDate || undefined })
       });
 
       if (res.ok) {
@@ -80,7 +80,7 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
     setImageUrl('');
     setCategory('Main Story');
     setIsMain(false);
-    setCreatedAt('');
+    setReleaseDate('');
   };
 
   const startEdit = (chapter: Chapter) => {
@@ -94,10 +94,10 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
     setCategory(chapter.category || 'Main Story');
     setIsMain(chapter.isMain || false);
     
-    if (chapter.createdAt) {
-      setCreatedAt(new Date(chapter.createdAt).toISOString().split('T')[0]);
+    if (chapter.releaseDate) {
+      setReleaseDate(new Date(chapter.releaseDate).toISOString().split('T')[0]);
     } else {
-      setCreatedAt('');
+      setReleaseDate('');
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -175,7 +175,7 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
               </div>
               <div className="form-group" style={{ width: '200px' }}>
                 <label className="form-label">Release Date (Optional)</label>
-                <input type="date" className="form-textarea" style={{ minHeight: '40px', colorScheme: 'dark' }} value={createdAt} onChange={e => setCreatedAt(e.target.value)} />
+                <input type="date" className="form-textarea" style={{ minHeight: '40px', colorScheme: 'dark' }} value={releaseDate} onChange={e => setReleaseDate(e.target.value)} />
               </div>
             </div>
 

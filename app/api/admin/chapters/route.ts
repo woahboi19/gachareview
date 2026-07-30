@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { gameId, title, chapterNum, summary, imageUrl, category, isMain, createdAt, shortCode } = body;
+    const { gameId, title, chapterNum, summary, imageUrl, category, isMain, releaseDate, shortCode } = body;
 
     if (!gameId || !title || !chapterNum || !summary) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -59,8 +59,8 @@ export async function POST(request: NextRequest) {
       isMain: isMain || false,
     };
 
-    if (createdAt) {
-      chapterData.createdAt = new Date(createdAt);
+    if (releaseDate) {
+      chapterData.releaseDate = new Date(releaseDate);
     }
 
     const chapter = await prisma.storyChapter.create({
