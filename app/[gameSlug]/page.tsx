@@ -177,7 +177,7 @@ export default async function GamePage({ params }: GamePageProps) {
                     <Link key={chapter.id} href={`/${game.slug}/${chapter.slug}`}>
                       <div className="glass-panel" style={{ cursor: 'pointer', display: 'flex', overflow: 'hidden' }}>
                         {chapter.imageUrl && (
-                          <div style={{ position: 'relative', width: '80px', flexShrink: 0, background: 'var(--color-surface-border)' }}>
+                          <div style={{ position: 'relative', width: '80px', alignSelf: 'stretch', flexShrink: 0, background: 'var(--color-surface-border)' }}>
                             <Image src={chapter.imageUrl} alt={chapter.title} fill style={{ objectFit: 'cover' }} />
                           </div>
                         )}
