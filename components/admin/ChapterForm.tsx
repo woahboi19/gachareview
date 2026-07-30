@@ -63,9 +63,9 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
       } else {
         alert(`Failed to ${editingId ? 'update' : 'create'} chapter`);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      alert(err?.message || `Error ${editingId ? 'updating' : 'creating'} chapter`);
+      alert(err instanceof Error ? err.message : `Error ${editingId ? 'updating' : 'creating'} chapter`);
     } finally {
       setIsSubmitting(false);
     }
@@ -201,7 +201,7 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
               <h3 style={{ fontSize: '1.2rem', marginBottom: '0.2rem' }}>{chapter.title}</h3>
             </div>
             <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <button className="btn btn-glass" style={{ padding: '0.4rem 1rem' }} onClick={() => startEdit(chapter as any)}>
+              <button className="btn btn-glass" style={{ padding: '0.4rem 1rem' }} onClick={() => startEdit(chapter)}>
                 Edit
               </button>
               <button className="btn btn-primary" style={{ background: '#ff3b30', color: '#fff', padding: '0.4rem 1rem' }} onClick={() => handleDelete(chapter.id)}>
