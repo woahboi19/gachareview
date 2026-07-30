@@ -43,8 +43,8 @@ export default function CharactersClient({ games }: { games: Game[] }) {
       setVoiceActorEN('');
       setVoiceActorJP('');
       router.refresh();
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : 'Unknown error');
     } finally {
       setIsSubmitting(false);
     }

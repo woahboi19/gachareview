@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import type { Session } from 'next-auth';
 import { toast } from 'react-hot-toast';
+import Image from 'next/image';
 import RatingStars from './RatingStars';
 import TranslateButton from './TranslateButton';
 import EmptyState from './EmptyState';
@@ -341,7 +342,7 @@ export default function ReviewSection({ chapterId, initialReviews, session }: Re
               <div key={review.id} className="glass-panel" style={{ padding: '1.5rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    {review.user.image && <img src={review.user.image} alt="" style={{ width: '24px', height: '24px', borderRadius: '50%' }} />}
+                    {review.user.image && <Image src={review.user.image} alt="" width={24} height={24} style={{ borderRadius: '50%' }} />}
                     <strong>{review.user.name}</strong>
                     {review.isSpoiler && <span style={{ background: '#ff3b30', color: '#fff', fontSize: '0.7rem', padding: '0.1rem 0.4rem', borderRadius: '4px', fontWeight: 'bold' }}>SPOILER</span>}
                   </div>

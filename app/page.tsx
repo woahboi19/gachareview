@@ -10,7 +10,7 @@ export default async function Home() {
   const session = await auth();
   const userId = session?.user?.id;
 
-  let favoriteGames: any[] = [];
+  let favoriteGames: { id: string; slug: string; title: string; description: string; imageUrl: string | null; }[] = [];
   if (userId) {
     const favorites = await prisma.favoriteGame.findMany({
       where: { userId },

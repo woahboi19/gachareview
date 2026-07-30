@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     // Default to 'tr' if not specified, but this will normally be sent by the client.
     const to = targetLang || 'tr';
 
-    const res = await translate(text, { to }) as any;
+    const res = await translate(text, { to }) as { text: string; from: { language: { iso: string } } };
 
     return NextResponse.json({ translatedText: res.text, from: res.from }, { status: 200 });
   } catch (error) {

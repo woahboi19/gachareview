@@ -1,6 +1,6 @@
 {
   "name": "gachareview",
-  "version": "0.7.7",
+  "version": "0.8.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -30,7 +30,6 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
     "prisma": "^7.8.0",
-    "tailwindcss": "^4",
     "tsx": "^4.22.4",
     "typescript": "^5"
   },

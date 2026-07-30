@@ -30,9 +30,9 @@ export async function POST(
     });
 
     return NextResponse.json(favorite, { status: 201 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     // If it already exists, Prisma throws P2002 (Unique constraint failed)
-    if (error.code === 'P2002') {
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
       return NextResponse.json({ error: 'Already favorited' }, { status: 400 });
     }
     console.error('Error favoriting game:', error);
@@ -61,8 +61,8 @@ export async function DELETE(
     });
 
     return NextResponse.json({ success: true }, { status: 200 });
-  } catch (error) {
-    console.error('Error unfavoriting game:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  } catch (error: unknown) {
+    console.error('Favorite error:', error);
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 });
   }
 }

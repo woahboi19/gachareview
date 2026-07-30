@@ -1,5 +1,6 @@
 import { prisma } from '../../../lib/prisma';
 import { notFound } from 'next/navigation';
+import Image from 'next/image';
 import { auth } from '../../../auth';
 import ProfileTabs from '../../../components/ProfileTabs';
 
@@ -75,6 +76,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         }}>
           {/* Avatar */}
           <div style={{
+            position: 'relative',
             width: '120px',
             height: '120px',
             borderRadius: '50%',
@@ -85,7 +87,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
             flexShrink: 0,
             transform: 'translateY(20px)'
           }}>
-            <img src={avatarUrl} alt={displayName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <Image src={avatarUrl} alt={displayName} fill style={{ objectFit: 'cover' }} />
           </div>
 
           <div style={{ paddingBottom: '0.5rem' }}>

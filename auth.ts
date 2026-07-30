@@ -3,7 +3,7 @@ import DiscordProvider from 'next-auth/providers/discord';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from './lib/prisma';
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const { handlers, auth, signIn } = NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [
     DiscordProvider({
@@ -21,7 +21,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     session({ session, user }) {
       if (session.user) {
         session.user.id = user.id;
-        // @ts-ignore - we'll define this in next-auth.d.ts
         session.user.role = user.role;
       }
       return session;

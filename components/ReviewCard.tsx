@@ -14,7 +14,7 @@ interface ReviewCardProps {
   authorName?: string;
 }
 
-export default function ReviewCard({ id, gameTitle, chapterTitle, chapterNum, rating, content, createdAt, authorName }: ReviewCardProps) {
+export default function ReviewCard({ gameTitle, chapterTitle, chapterNum, rating, content, createdAt, authorName }: ReviewCardProps) {
   const [translatedContent, setTranslatedContent] = useState<string | null>(null);
 
   const displayContent = translatedContent || content;

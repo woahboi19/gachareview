@@ -1,5 +1,6 @@
 import { prisma } from '../../lib/prisma';
 import Link from 'next/link';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { auth } from '../../auth';
 import FavoriteButton from '../../components/FavoriteButton';
@@ -40,8 +41,8 @@ export default async function GamePage({ params }: GamePageProps) {
   let totalRating = 0;
   let totalReviews = 0;
 
-  game.chapters.forEach((chapter: any) => {
-    chapter.reviews.forEach((review: any) => {
+  game.chapters.forEach((chapter) => {
+    chapter.reviews.forEach((review) => {
       totalRating += review.rating;
       totalReviews += 1;
     });
@@ -77,8 +78,8 @@ export default async function GamePage({ params }: GamePageProps) {
       {/* Cinematic Header */}
       <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start', flexWrap: 'wrap', marginBottom: '3rem', marginTop: '1rem' }}>
         {game.imageUrl && (
-          <div style={{ flex: '0 0 250px', aspectRatio: '3/4', borderRadius: 'var(--radius-md)', overflow: 'hidden', boxShadow: '0 8px 16px rgba(0,0,0,0.3)', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'var(--color-surface-border)' }}>
-            <img src={game.imageUrl} alt={game.title} style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block', objectPosition: 'center' }} />
+          <div style={{ position: 'relative', flex: '0 0 250px', aspectRatio: '3/4', borderRadius: 'var(--radius-md)', overflow: 'hidden', boxShadow: '0 8px 16px rgba(0,0,0,0.3)', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'var(--color-surface-border)' }}>
+            <Image src={game.imageUrl} alt={game.title} fill style={{ objectFit: 'contain', objectPosition: 'center' }} />
           </div>
         )}
         <div style={{ flex: '1 1 400px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
@@ -123,8 +124,8 @@ export default async function GamePage({ params }: GamePageProps) {
             {game.characters.map((char) => (
               <div key={char.id} className="glass-panel" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                 {char.imageUrl ? (
-                  <div style={{ width: '100%', height: '200px', background: 'var(--color-surface-border)', overflow: 'hidden' }}>
-                    <img src={char.imageUrl} alt={char.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <div style={{ position: 'relative', width: '100%', height: '200px', background: 'var(--color-surface-border)', overflow: 'hidden' }}>
+                    <Image src={char.imageUrl} alt={char.name} fill style={{ objectFit: 'cover' }} />
                   </div>
                 ) : (
                   <div style={{ width: '100%', height: '200px', background: 'var(--color-surface-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-text-muted)' }}>
@@ -176,8 +177,8 @@ export default async function GamePage({ params }: GamePageProps) {
                     <Link key={chapter.id} href={`/${game.slug}/${chapter.slug}`}>
                       <div className="glass-panel" style={{ cursor: 'pointer', display: 'flex', overflow: 'hidden' }}>
                         {chapter.imageUrl && (
-                          <div style={{ width: '80px', flexShrink: 0, background: 'var(--color-surface-border)' }}>
-                            <img src={chapter.imageUrl} alt={chapter.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          <div style={{ position: 'relative', width: '80px', flexShrink: 0, background: 'var(--color-surface-border)' }}>
+                            <Image src={chapter.imageUrl} alt={chapter.title} fill style={{ objectFit: 'cover' }} />
                           </div>
                         )}
                         <div style={{ padding: '1.25rem 1.5rem', flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

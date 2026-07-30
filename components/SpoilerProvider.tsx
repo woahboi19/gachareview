@@ -16,20 +16,18 @@ const SpoilerContext = createContext<SpoilerContextType>({
 export const useSpoiler = () => useContext(SpoilerContext);
 
 export function SpoilerProvider({ children, initialMode = true }: { children: React.ReactNode, initialMode?: boolean }) {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const [isSpoilerMode, setIsSpoilerMode] = useState(initialMode);
-  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
       const stored = localStorage.getItem('spoilerMode');
       if (stored !== null) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setIsSpoilerMode(stored === 'true');
       }
-      setIsLoaded(true);
     } else if (status === 'authenticated') {
       setIsSpoilerMode(initialMode);
-      setIsLoaded(true);
     }
   }, [status, initialMode]);
 
