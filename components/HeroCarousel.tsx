@@ -98,7 +98,7 @@ export default function HeroCarousel({ chapters }: HeroCarouselProps) {
               {/* Main Content Window */}
               <div className="carousel-content" style={{ position: 'relative', zIndex: 3, padding: '4rem 3rem', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <div className="carousel-text-area" style={{ maxWidth: '600px', marginLeft: chapters.length > 1 ? '3rem' : '0' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
                     <span style={{ 
                       background: 'var(--color-primary)', 
                       color: '#000', 
