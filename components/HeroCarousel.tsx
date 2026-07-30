@@ -179,7 +179,7 @@ export default function HeroCarousel({ chapters }: HeroCarouselProps) {
                     );
                   })()}
 
-                  <Link href={`/game/${chapter.game.slug}/chapter/${chapter.slug}`}>
+                  <Link href={`/${chapter.game.slug}/${chapter.slug}`}>
                     <button className="btn btn-primary" style={{ padding: '0.8rem 2rem', fontSize: '1.1rem' }}>
                       Read Details & Reviews
                     </button>

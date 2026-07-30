@@ -10,7 +10,7 @@ interface GameCardProps {
 
 export default function GameCard({ slug, title, description, imageUrl }: GameCardProps) {
   return (
-    <Link href={`/game/${slug}`}>
+    <Link href={`/${slug}`}>
       <div className="glass-panel animate-fade-in card-hover" style={{ padding: '0', height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         {imageUrl && (
           <div style={{ width: '100%', aspectRatio: '3/4', overflow: 'hidden', background: '#050505', display: 'flex', justifyContent: 'center', alignItems: 'center', borderBottom: '1px solid var(--color-surface-border)' }}>

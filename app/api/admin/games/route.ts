@@ -28,6 +28,11 @@ export async function POST(request: NextRequest) {
 
     let slug = slugify(title);
     
+    const reservedSlugs = ['login', 'admin', 'api', 'profile', 'game', 'search'];
+    if (reservedSlugs.includes(slug)) {
+      slug = `${slug}-game`;
+    }
+    
     // Simple check to avoid duplicates in case of same title
     const existing = await prisma.game.findUnique({ where: { slug } });
     if (existing) {

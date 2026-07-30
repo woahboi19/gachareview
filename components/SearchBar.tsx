@@ -134,7 +134,7 @@ export default function SearchBar() {
                     Games
                   </div>
                   {results.games.map(game => (
-                    <Link key={game.id} href={`/game/${game.slug}`} onClick={() => setIsOpen(false)}>
+                    <Link key={game.id} href={`/${game.slug}`} onClick={() => setIsOpen(false)}>
                       <div style={{ padding: '0.5rem 1rem', cursor: 'pointer', transition: 'background 0.2s ease' }}
                            onMouseEnter={e => e.currentTarget.style.background = 'var(--color-surface-hover)'}
                            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
@@ -151,7 +151,7 @@ export default function SearchBar() {
                     Chapters
                   </div>
                   {results.chapters.map(chapter => (
-                    <Link key={chapter.id} href={`/game/${chapter.game.slug}/chapter/${chapter.slug}`} onClick={() => setIsOpen(false)}>
+                    <Link key={chapter.id} href={`/${chapter.game.slug}/${chapter.slug}`} onClick={() => setIsOpen(false)}>
                       <div style={{ padding: '0.5rem 1rem', cursor: 'pointer', transition: 'background 0.2s ease' }}
                            onMouseEnter={e => e.currentTarget.style.background = 'var(--color-surface-hover)'}
                            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>

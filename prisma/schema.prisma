@@ -82,7 +82,7 @@ model Game {
 model StoryChapter {
   id          String   @id @default(cuid())
   gameId      String
-  slug        String   @unique
+  slug        String
   title       String
   chapterNum  Int
   summary     String
@@ -93,6 +93,8 @@ model StoryChapter {
   reviews     Review[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@unique([gameId, slug])
 }
 
 model Review {

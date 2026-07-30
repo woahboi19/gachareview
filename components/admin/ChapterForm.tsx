@@ -17,6 +17,7 @@ interface Chapter {
   imageUrl: string | null;
   category: string;
   isMain: boolean;
+  slug?: string;
   createdAt?: string | Date;
   game: { title: string };
 }
@@ -25,6 +26,7 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
   const [chapters, setChapters] = useState<Chapter[]>(initialChapters);
   const [gameId, setGameId] = useState(games.length > 0 ? games[0].id : '');
   const [title, setTitle] = useState('');
+  const [shortCode, setShortCode] = useState('');
   const [chapterNum, setChapterNum] = useState('');
   const [summary, setSummary] = useState('');
   const [imageUrl, setImageUrl] = useState('');
@@ -46,7 +48,7 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ gameId, title, chapterNum, summary, imageUrl, category, isMain, createdAt: createdAt || undefined })
+        body: JSON.stringify({ gameId, title, shortCode, chapterNum, summary, imageUrl, category, isMain, createdAt: createdAt || undefined })
       });
 
       if (res.ok) {
@@ -61,9 +63,9 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
       } else {
         alert(`Failed to ${editingId ? 'update' : 'create'} chapter`);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert(`Error ${editingId ? 'updating' : 'creating'} chapter`);
+      alert(err?.message || `Error ${editingId ? 'updating' : 'creating'} chapter`);
     } finally {
       setIsSubmitting(false);
     }
@@ -72,6 +74,7 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
   const resetForm = () => {
     setEditingId(null);
     setTitle('');
+    setShortCode('');
     setChapterNum('');
     setSummary('');
     setImageUrl('');
@@ -84,6 +87,7 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
     setEditingId(chapter.id);
     setGameId(chapter.gameId || (games.length > 0 ? games[0].id : ''));
     setTitle(chapter.title);
+    setShortCode(chapter.slug || '');
     setChapterNum(chapter.chapterNum.toString());
     setSummary(chapter.summary);
     setImageUrl(chapter.imageUrl || '');
@@ -146,6 +150,10 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
                 <input type="text" className="form-textarea" style={{ minHeight: '40px' }} value={title} onChange={e => setTitle(e.target.value)} required />
               </div>
               <div className="form-group" style={{ width: '150px' }}>
+                <label className="form-label">Short URL Code</label>
+                <input type="text" className="form-textarea" style={{ minHeight: '40px' }} value={shortCode} onChange={e => setShortCode(e.target.value)} placeholder="e.g. 1001" />
+              </div>
+              <div className="form-group" style={{ width: '100px' }}>
                 <label className="form-label">Chapter #</label>
                 <input type="number" className="form-textarea" style={{ minHeight: '40px' }} value={chapterNum} onChange={e => setChapterNum(e.target.value)} required />
               </div>

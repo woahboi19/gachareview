@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { gameId, title, chapterNum, summary, imageUrl, category, isMain, createdAt } = body;
+    const { gameId, title, chapterNum, summary, imageUrl, category, isMain, createdAt, shortCode } = body;
 
     if (!gameId || !title || !chapterNum || !summary) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -31,10 +31,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Game not found' }, { status: 404 });
     }
 
-    let slug = slugify(`${game.title}-${title}`);
-    const existing = await prisma.storyChapter.findUnique({ where: { slug } });
+    let slug = shortCode ? slugify(shortCode) : Math.random().toString(36).substring(2, 7);
+    
+    // Check if chapter short code is already taken in this game
+    const existing = await prisma.storyChapter.findUnique({ 
+      where: { 
+        gameId_slug: { gameId, slug } 
+      } 
+    });
+    
     if (existing) {
-      slug = `${slug}-${Math.random().toString(36).substring(2, 6)}`;
+      if (shortCode) {
+         return NextResponse.json({ error: 'This short code is already used for this game.' }, { status: 400 });
+      } else {
+         slug = `${slug}${Math.random().toString(36).substring(2, 4)}`;
+      }
     }
 
     const chapterData: any = {

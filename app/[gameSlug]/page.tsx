@@ -1,19 +1,19 @@
-import { prisma } from '../../../lib/prisma';
+import { prisma } from '../../lib/prisma';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { auth } from '../../../auth';
-import FavoriteButton from '../../../components/FavoriteButton';
-import EmptyState from '../../../components/EmptyState';
+import { auth } from '../../auth';
+import FavoriteButton from '../../components/FavoriteButton';
+import EmptyState from '../../components/EmptyState';
 
 interface GamePageProps {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ gameSlug: string }>;
 }
 
 export default async function GamePage({ params }: GamePageProps) {
-  const { slug } = await params;
+  const { gameSlug } = await params;
   
   const game = await prisma.game.findUnique({
-    where: { slug },
+    where: { slug: gameSlug },
     include: {
       chapters: {
         orderBy: { chapterNum: 'asc' },
@@ -178,7 +178,7 @@ export default async function GamePage({ params }: GamePageProps) {
                     : null;
 
                   return (
-                    <Link key={chapter.id} href={`/game/${game.slug}/chapter/${chapter.slug}`}>
+                    <Link key={chapter.id} href={`/${game.slug}/${chapter.slug}`}>
                       <div className="glass-panel" style={{ padding: '1.25rem 1.5rem', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div>
                           <h3 style={{ marginBottom: '0.25rem', fontSize: '1.1rem' }}>

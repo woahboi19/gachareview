@@ -1,19 +1,22 @@
-import { prisma } from '../../../../../lib/prisma';
+import { prisma } from '../../../lib/prisma';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import ReviewSection from '../../../../../components/ReviewSection';
-import { auth } from '../../../../../auth';
+import ReviewSection from '../../../components/ReviewSection';
+import { auth } from '../../../auth';
 
 interface ChapterPageProps {
-  params: Promise<{ slug: string; chapterSlug: string }>;
+  params: Promise<{ gameSlug: string; chapterSlug: string }>;
 }
 
 export default async function ChapterPage({ params }: ChapterPageProps) {
-  const { slug, chapterSlug } = await params;
+  const { gameSlug, chapterSlug } = await params;
   const session = await auth();
 
-  const chapter = await prisma.storyChapter.findUnique({
-    where: { slug: chapterSlug },
+  const chapter = await prisma.storyChapter.findFirst({
+    where: { 
+      slug: chapterSlug,
+      game: { slug: gameSlug }
+    },
     include: {
       game: true,
       reviews: {
@@ -23,14 +26,14 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
     }
   });
 
-  if (!chapter || chapter.game.slug !== slug) {
+  if (!chapter) {
     notFound();
   }
 
   return (
     <div className="animate-fade-in">
       <div style={{ marginBottom: '1.5rem', marginTop: '1rem' }}>
-        <Link href={`/game/${slug}`}>
+        <Link href={`/${gameSlug}`}>
           <button className="btn btn-glass" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem', gap: '0.5rem' }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="19" y1="12" x2="5" y2="12"></line>
