@@ -47,7 +47,7 @@ export default function HeroCarousel({ chapters }: HeroCarouselProps) {
   };
 
   return (
-    <div className="carousel-wrapper" style={{ position: 'relative', width: '100%', maxWidth: '1200px', margin: '0 auto 2rem', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 12px 24px rgba(0,0,0,0.6)', height: '420px' }}>
+    <div className="carousel-wrapper" style={{ position: 'relative', width: '100%', maxWidth: '1200px', margin: '0 auto 2rem', overflow: 'hidden', border: '1px solid var(--color-surface-border)', borderTop: '2px solid var(--color-primary)', background: 'var(--color-surface)', height: '420px' }}>
       
       {/* Sliding Track */}
       <div 
@@ -64,14 +64,12 @@ export default function HeroCarousel({ chapters }: HeroCarouselProps) {
           return (
             <div key={chapter.id} className="carousel-slide" style={{ minWidth: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
               
-              {/* Blurred Background Layer */}
+              {/* Solid Background Layer (Replaced Blur) */}
               <div style={{
                 position: 'absolute',
-                top: -20, left: -20, right: -20, bottom: -20,
-                backgroundImage: `url(${bgImage})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                filter: 'blur(20px) brightness(0.5)',
+                top: 0, left: 0, right: 0, bottom: 0,
+                backgroundColor: 'var(--color-surface)',
+                backgroundImage: 'radial-gradient(circle at 10% 20%, rgba(217, 70, 239, 0.05) 0%, transparent 40%)',
                 zIndex: 0
               }} />
 
@@ -169,7 +167,7 @@ export default function HeroCarousel({ chapters }: HeroCarouselProps) {
             style={{
               position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)',
               background: 'rgba(255,255,255,0.1)', color: '#fff', border: 'none',
-              width: '40px', height: '40px', borderRadius: '50%',
+              width: '40px', height: '40px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               cursor: 'pointer', transition: 'background 0.2s ease',
               fontSize: '1.2rem', backdropFilter: 'blur(4px)', zIndex: 10
@@ -184,7 +182,7 @@ export default function HeroCarousel({ chapters }: HeroCarouselProps) {
             style={{
               position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)',
               background: 'rgba(255,255,255,0.1)', color: '#fff', border: 'none',
-              width: '40px', height: '40px', borderRadius: '50%',
+              width: '40px', height: '40px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               cursor: 'pointer', transition: 'background 0.2s ease',
               fontSize: '1.2rem', backdropFilter: 'blur(4px)', zIndex: 10
@@ -205,7 +203,7 @@ export default function HeroCarousel({ chapters }: HeroCarouselProps) {
               key={idx}
               onClick={() => setCurrentIndex(idx)}
               style={{
-                width: '10px', height: '10px', borderRadius: '50%',
+                width: '12px', height: '12px', borderRadius: '0',
                 background: currentIndex === idx ? 'var(--color-primary)' : 'rgba(255,255,255,0.3)',
                 border: 'none', cursor: 'pointer', transition: 'background 0.3s ease'
               }}

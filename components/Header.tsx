@@ -30,10 +30,10 @@ export default function Header({ session }: HeaderProps) {
     <header className="navbar" style={{ background: 'var(--color-surface)', borderBottom: '1px solid var(--color-surface-border)', padding: '1rem 2rem', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '1rem' }}>
       <Link href="/" className="logo-hover">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-            <span style={{ background: 'var(--color-primary)', color: '#000', padding: '0.2rem 0.6rem', borderRadius: '4px', fontWeight: 900, fontSize: '1.4rem', letterSpacing: '-0.5px' }}>
+            <span style={{ background: 'var(--color-primary)', color: '#000', padding: '0.2rem 0.6rem', borderRadius: '0px', fontWeight: 900, fontSize: '1.4rem', letterSpacing: '-0.5px', fontFamily: 'var(--font-rajdhani)' }}>
               GR
             </span>
-            <h1 className="navbar-title" style={{ margin: 0, fontSize: '1.4rem', fontWeight: 700, color: 'var(--color-text-main)' }}>GachaReview</h1>
+            <h1 className="navbar-title" style={{ margin: 0, fontSize: '1.6rem', fontWeight: 700, color: 'var(--color-text-main)', fontFamily: 'var(--font-rajdhani)', textTransform: 'uppercase' }}>GachaReview</h1>
           </div>
         </Link>
       

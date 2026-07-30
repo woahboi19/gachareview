@@ -4,6 +4,18 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { Toaster } from 'react-hot-toast';
 import { auth } from "../auth";
+import { Rajdhani, Space_Grotesk } from 'next/font/google';
+
+const rajdhani = Rajdhani({ 
+  subsets: ['latin'], 
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-rajdhani'
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  variable: '--font-space'
+});
 
 export const metadata: Metadata = {
   title: "Gacha Review",
@@ -18,7 +30,7 @@ export default async function RootLayout({
   const session = await auth();
 
   return (
-    <html lang="en">
+    <html lang="en" className={`${rajdhani.variable} ${spaceGrotesk.variable}`}>
       <body>
         <Header session={session} />
         <main className="container" style={{ paddingBottom: '4rem', minHeight: '80vh' }}>
