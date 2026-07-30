@@ -5,6 +5,8 @@ import { auth } from '../../auth';
 import FavoriteButton from '../../components/FavoriteButton';
 import EmptyState from '../../components/EmptyState';
 
+import { getCachedGameBySlug } from '../../lib/data';
+
 interface GamePageProps {
   params: Promise<{ gameSlug: string }>;
 }
@@ -12,18 +14,7 @@ interface GamePageProps {
 export default async function GamePage({ params }: GamePageProps) {
   const { gameSlug } = await params;
   
-  const game = await prisma.game.findUnique({
-    where: { slug: gameSlug },
-    include: {
-      chapters: {
-        orderBy: { chapterNum: 'asc' },
-        include: {
-          reviews: true
-        }
-      },
-      characters: true
-    }
-  });
+  const game = await getCachedGameBySlug(gameSlug);
 
   if (!game) {
     notFound();

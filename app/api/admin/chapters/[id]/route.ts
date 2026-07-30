@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 import { prisma } from '../../../../../lib/prisma';
 import { auth } from '../../../../../auth';
 
@@ -14,9 +15,15 @@ export async function DELETE(
 
     const { id } = await params;
 
-    await prisma.storyChapter.delete({
-      where: { id }
+    const chapter = await prisma.storyChapter.delete({
+      where: { id },
+      include: { game: true }
     });
+
+    revalidateTag('chapters', {});
+    revalidateTag('games', {});
+    revalidateTag(`game-${chapter.game.slug}`, {});
+    revalidateTag(`chapter-${chapter.game.slug}-${chapter.slug}`, {});
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -64,6 +71,11 @@ export async function PUT(
         game: true
       }
     });
+
+    revalidateTag('chapters', {});
+    revalidateTag('games', {});
+    revalidateTag(`game-${chapter.game.slug}`, {});
+    revalidateTag(`chapter-${chapter.game.slug}-${chapter.slug}`, {});
 
     return NextResponse.json(chapter);
   } catch (error) {

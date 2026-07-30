@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 import { prisma } from '../../../lib/prisma';
 import { auth } from '../../../auth';
 
@@ -19,7 +20,11 @@ export async function POST(request: Request) {
     // Get gameId from chapter to link the review properly
     const chapter = await prisma.storyChapter.findUnique({
       where: { id: chapterId },
-      select: { gameId: true }
+      select: { 
+        gameId: true,
+        slug: true,
+        game: { select: { slug: true } }
+      }
     });
 
     const review = await prisma.review.create({
@@ -36,6 +41,11 @@ export async function POST(request: Request) {
         upvotes: true
       }
     });
+
+    if (chapter) {
+      revalidateTag(`chapter-${chapter.game.slug}-${chapter.slug}`, {});
+      revalidateTag(`game-${chapter.game.slug}`, {});
+    }
 
     return NextResponse.json(review, { status: 201 });
   } catch (error: any) {

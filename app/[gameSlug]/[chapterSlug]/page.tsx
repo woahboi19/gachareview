@@ -4,6 +4,8 @@ import Link from 'next/link';
 import ReviewSection from '../../../components/ReviewSection';
 import { auth } from '../../../auth';
 
+import { getCachedChapterBySlug } from '../../../lib/data';
+
 interface ChapterPageProps {
   params: Promise<{ gameSlug: string; chapterSlug: string }>;
 }
@@ -12,19 +14,7 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
   const { gameSlug, chapterSlug } = await params;
   const session = await auth();
 
-  const chapter = await prisma.storyChapter.findFirst({
-    where: { 
-      slug: chapterSlug,
-      game: { slug: gameSlug }
-    },
-    include: {
-      game: true,
-      reviews: {
-        orderBy: { createdAt: 'desc' },
-        include: { user: true, upvotes: true }
-      }
-    }
-  });
+  const chapter = await getCachedChapterBySlug(gameSlug, chapterSlug);
 
   if (!chapter) {
     notFound();

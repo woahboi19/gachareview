@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 import { prisma } from '../../../../lib/prisma';
 import { auth } from '../../../../auth';
 
@@ -14,7 +15,12 @@ export async function PUT(request: Request, props: { params: Promise<{ id: strin
     const { rating, content, isSpoiler } = await request.json();
 
     const existingReview = await prisma.review.findUnique({
-      where: { id: params.id }
+      where: { id: params.id },
+      include: {
+        chapter: {
+          select: { slug: true, game: { select: { slug: true } } }
+        }
+      }
     });
 
     if (!existingReview) {
@@ -38,6 +44,11 @@ export async function PUT(request: Request, props: { params: Promise<{ id: strin
       }
     });
 
+    if (existingReview.chapter?.game?.slug) {
+      revalidateTag(`game-${existingReview.chapter.game.slug}`, {});
+      revalidateTag(`chapter-${existingReview.chapter.game.slug}-${existingReview.chapter.slug}`, {});
+    }
+
     return NextResponse.json(updatedReview, { status: 200 });
   } catch (error) {
     console.error('Error updating review:', error);
@@ -55,7 +66,12 @@ export async function DELETE(request: Request, props: { params: Promise<{ id: st
     }
 
     const existingReview = await prisma.review.findUnique({
-      where: { id: params.id }
+      where: { id: params.id },
+      include: {
+        chapter: {
+          select: { slug: true, game: { select: { slug: true } } }
+        }
+      }
     });
 
     if (!existingReview) {
@@ -69,6 +85,11 @@ export async function DELETE(request: Request, props: { params: Promise<{ id: st
     await prisma.review.delete({
       where: { id: params.id }
     });
+
+    if (existingReview.chapter?.game?.slug) {
+      revalidateTag(`game-${existingReview.chapter.game.slug}`, {});
+      revalidateTag(`chapter-${existingReview.chapter.game.slug}-${existingReview.chapter.slug}`, {});
+    }
 
     return new NextResponse(null, { status: 204 });
   } catch (error) {

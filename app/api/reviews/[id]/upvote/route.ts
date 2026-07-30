@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 import { prisma } from '../../../../../lib/prisma';
 import { auth } from '../../../../../auth';
 
@@ -17,7 +18,12 @@ export async function POST(
 
     // Check if the review exists
     const review = await prisma.review.findUnique({
-      where: { id }
+      where: { id },
+      include: {
+        chapter: {
+          select: { slug: true, game: { select: { slug: true } } }
+        }
+      }
     });
 
     if (!review) {
@@ -34,12 +40,14 @@ export async function POST(
       }
     });
 
+    let action = '';
+
     if (existingUpvote) {
       // Toggle off: Delete upvote
       await prisma.upvote.delete({
         where: { id: existingUpvote.id }
       });
-      return NextResponse.json({ action: 'removed' });
+      action = 'removed';
     } else {
       // Toggle on: Create upvote
       await prisma.upvote.create({
@@ -48,8 +56,15 @@ export async function POST(
           reviewId: id
         }
       });
-      return NextResponse.json({ action: 'added' });
+      action = 'added';
     }
+
+    if (review.chapter?.game?.slug) {
+      revalidateTag(`game-${review.chapter.game.slug}`, {});
+      revalidateTag(`chapter-${review.chapter.game.slug}-${review.chapter.slug}`, {});
+    }
+
+    return NextResponse.json({ action });
 
   } catch (error) {
     console.error('Error toggling upvote:', error);
