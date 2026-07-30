@@ -5,15 +5,15 @@ import ReviewSection from '../../../../../components/ReviewSection';
 import { auth } from '../../../../../auth';
 
 interface ChapterPageProps {
-  params: Promise<{ id: string; chapterId: string }>;
+  params: Promise<{ slug: string; chapterSlug: string }>;
 }
 
 export default async function ChapterPage({ params }: ChapterPageProps) {
-  const { id, chapterId } = await params;
+  const { slug, chapterSlug } = await params;
   const session = await auth();
 
   const chapter = await prisma.storyChapter.findUnique({
-    where: { id: chapterId },
+    where: { slug: chapterSlug },
     include: {
       game: true,
       reviews: {
@@ -23,14 +23,14 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
     }
   });
 
-  if (!chapter || chapter.gameId !== id) {
+  if (!chapter || chapter.game.slug !== slug) {
     notFound();
   }
 
   return (
     <div className="animate-fade-in">
       <div style={{ marginBottom: '1.5rem', marginTop: '1rem' }}>
-        <Link href={`/game/${id}`}>
+        <Link href={`/game/${slug}`}>
           <button className="btn btn-glass" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem', gap: '0.5rem' }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="19" y1="12" x2="5" y2="12"></line>

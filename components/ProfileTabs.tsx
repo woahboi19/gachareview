@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 
 type Game = {
   id: string;
+  slug: string;
   title: string;
   description: string;
   imageUrl: string | null;
@@ -113,7 +114,8 @@ export default function ProfileTabs({ user, isOwnProfile }: ProfileTabsProps) {
           {games.map((game) => (
             <GameCard 
               key={game.id} 
-              id={game.id} 
+              id={game.id}
+              slug={game.slug}
               title={game.title} 
               description={game.description} 
               imageUrl={game.imageUrl} 

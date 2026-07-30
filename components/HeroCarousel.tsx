@@ -6,6 +6,7 @@ import { useSpoiler } from './SpoilerProvider';
 
 interface Game {
   id: string;
+  slug: string;
   title: string;
   imageUrl: string | null;
 }
@@ -13,6 +14,7 @@ interface Game {
 interface Chapter {
   id: string;
   gameId: string;
+  slug: string;
   title: string;
   chapterNum: number;
   summary: string;
@@ -177,7 +179,7 @@ export default function HeroCarousel({ chapters }: HeroCarouselProps) {
                     );
                   })()}
 
-                  <Link href={`/game/${chapter.gameId}/chapter/${chapter.id}`}>
+                  <Link href={`/game/${chapter.game.slug}/chapter/${chapter.slug}`}>
                     <button className="btn btn-primary" style={{ padding: '0.8rem 2rem', fontSize: '1.1rem' }}>
                       Read Details & Reviews
                     </button>

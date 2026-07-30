@@ -65,6 +65,7 @@ model VerificationToken {
 
 model Game {
   id          String   @id @default(cuid())
+  slug        String   @unique
   title       String
   description String
   imageUrl    String?
@@ -81,6 +82,7 @@ model Game {
 model StoryChapter {
   id          String   @id @default(cuid())
   gameId      String
+  slug        String   @unique
   title       String
   chapterNum  Int
   summary     String

@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
         ]
       },
       include: {
-        game: { select: { title: true } }
+        game: { select: { title: true, slug: true } }
       },
       take: 5
     });

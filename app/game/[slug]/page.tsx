@@ -6,14 +6,14 @@ import FavoriteButton from '../../../components/FavoriteButton';
 import EmptyState from '../../../components/EmptyState';
 
 interface GamePageProps {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 }
 
 export default async function GamePage({ params }: GamePageProps) {
-  const { id } = await params;
+  const { slug } = await params;
   
   const game = await prisma.game.findUnique({
-    where: { id },
+    where: { slug },
     include: {
       chapters: {
         orderBy: { chapterNum: 'asc' },
@@ -38,7 +38,7 @@ export default async function GamePage({ params }: GamePageProps) {
       where: {
         userId_gameId: {
           userId,
-          gameId: id
+          gameId: game.id
         }
       }
     });
@@ -178,7 +178,7 @@ export default async function GamePage({ params }: GamePageProps) {
                     : null;
 
                   return (
-                    <Link key={chapter.id} href={`/game/${game.id}/chapter/${chapter.id}`}>
+                    <Link key={chapter.id} href={`/game/${game.slug}/chapter/${chapter.slug}`}>
                       <div className="glass-panel" style={{ padding: '1.25rem 1.5rem', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div>
                           <h3 style={{ marginBottom: '0.25rem', fontSize: '1.1rem' }}>

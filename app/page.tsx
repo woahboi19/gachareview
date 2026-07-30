@@ -60,7 +60,8 @@ export default async function Home() {
           {favoriteGames.map(game => (
             <GameCard 
               key={game.id} 
-              id={game.id} 
+              id={game.id}
+              slug={game.slug}
               title={game.title} 
               description={game.description} 
               imageUrl={game.imageUrl} 
@@ -77,7 +78,8 @@ export default async function Home() {
         {popularGames.map(game => (
           <GameCard 
             key={game.id} 
-            id={game.id} 
+            id={game.id}
+            slug={game.slug}
             title={game.title} 
             description={game.description} 
             imageUrl={game.imageUrl} 
@@ -93,7 +95,8 @@ export default async function Home() {
         {allGames.map(game => (
           <GameCard 
             key={game.id} 
-            id={game.id} 
+            id={game.id}
+            slug={game.slug}
             title={game.title} 
             description={game.description} 
             imageUrl={game.imageUrl} 
