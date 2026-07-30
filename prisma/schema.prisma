@@ -15,11 +15,14 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
+  bio           String?   // New bio field
+  spoilerMode   Boolean   @default(true) // Global spoiler toggle
   accounts      Account[]
   sessions      Session[]
   reviews       Review[]
   upvotes       Upvote[]
   favorites     FavoriteGame[]
+  gameStatuses  UserGameStatus[] // New GameStatus relation
   role          String    @default("USER")
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -69,6 +72,8 @@ model Game {
   chapters    StoryChapter[]
   reviews     Review[]
   favoritedBy FavoriteGame[]
+  userStatuses UserGameStatus[]
+  characters  Character[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -126,4 +131,37 @@ model FavoriteGame {
   createdAt DateTime @default(now())
 
   @@unique([userId, gameId])
+}
+
+enum GameStatus {
+  PLAYING
+  DROPPED
+  COMPLETED
+  FAVORITE
+}
+
+model UserGameStatus {
+  id        String     @id @default(cuid())
+  userId    String
+  gameId    String
+  status    GameStatus
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game      Game       @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@unique([userId, gameId])
+}
+
+model Character {
+  id          String   @id @default(cuid())
+  gameId      String
+  name        String
+  lore        String
+  imageUrl    String?
+  voiceActorEN String?
+  voiceActorJP String?
+  game        Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

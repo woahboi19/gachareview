@@ -20,7 +20,8 @@ export default async function GamePage({ params }: GamePageProps) {
         include: {
           reviews: true
         }
-      }
+      },
+      characters: true
     }
   });
 
@@ -117,6 +118,46 @@ export default async function GamePage({ params }: GamePageProps) {
         </div>
       </div>
 
+      {/* Characters Section */}
+      {game.characters && game.characters.length > 0 && (
+        <div style={{ marginBottom: '4rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem', borderLeft: '4px solid var(--color-primary)', paddingLeft: '0.75rem' }}>
+            <h2 style={{ fontSize: '1.5rem', margin: 0, textTransform: 'uppercase', fontFamily: 'var(--font-rajdhani)' }}>Characters</h2>
+          </div>
+          <div className="grid-cards" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))' }}>
+            {game.characters.map((char) => (
+              <div key={char.id} className="glass-panel" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                {char.imageUrl ? (
+                  <div style={{ width: '100%', height: '200px', background: 'var(--color-surface-border)', overflow: 'hidden' }}>
+                    <img src={char.imageUrl} alt={char.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                ) : (
+                  <div style={{ width: '100%', height: '200px', background: 'var(--color-surface-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-text-muted)' }}>
+                    No Image
+                  </div>
+                )}
+                <div style={{ padding: '1rem' }}>
+                  <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.2rem', fontFamily: 'var(--font-rajdhani)', textTransform: 'uppercase' }}>{char.name}</h3>
+                  <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', margin: '0 0 1rem 0', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                    {char.lore}
+                  </p>
+                  {(char.voiceActorEN || char.voiceActorJP) && (
+                    <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', borderTop: '1px solid var(--color-surface-border)', paddingTop: '0.5rem' }}>
+                      {char.voiceActorEN && <div><strong>EN:</strong> {char.voiceActorEN}</div>}
+                      {char.voiceActorJP && <div><strong>JP:</strong> {char.voiceActorJP}</div>}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Chapters Section */}
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem', borderLeft: '4px solid var(--color-primary)', paddingLeft: '0.75rem' }}>
+        <h2 style={{ fontSize: '1.5rem', margin: 0, textTransform: 'uppercase', fontFamily: 'var(--font-rajdhani)' }}>Chapters</h2>
+      </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
         {sortedCategories.length === 0 ? (
           <EmptyState 

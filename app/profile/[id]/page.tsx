@@ -13,12 +13,17 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   const user = await prisma.user.findUnique({
     where: { id },
     include: {
-      favorites: {
+      gameStatuses: {
         include: {
           game: true
         },
         orderBy: {
           createdAt: 'desc'
+        }
+      },
+      favorites: {
+        include: {
+          game: true
         }
       },
       reviews: {
@@ -90,6 +95,11 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
                 <span style={{ background: '#ff3b30', color: '#fff', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 'bold' }}>ADMIN</span>
               )}
             </div>
+            {user.bio && (
+              <p style={{ color: 'var(--color-text-main)', margin: '0.5rem 0 0 0', fontSize: '1.1rem', maxWidth: '500px' }}>
+                {user.bio}
+              </p>
+            )}
             <p style={{ color: '#ccc', margin: 0, marginTop: '0.5rem', fontSize: '1rem' }}>
               Joined {new Date(user.createdAt).toLocaleDateString()}
             </p>

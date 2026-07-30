@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useSpoiler } from './SpoilerProvider';
 
 interface Game {
   id: string;
@@ -26,6 +27,8 @@ interface HeroCarouselProps {
 
 export default function HeroCarousel({ chapters }: HeroCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { isSpoilerMode } = useSpoiler();
+  const [revealedSpoilers, setRevealedSpoilers] = useState<Record<string, boolean>>({});
 
   // Optional: Auto-slide
   useEffect(() => {
@@ -133,19 +136,46 @@ export default function HeroCarousel({ chapters }: HeroCarouselProps) {
                     {chapter.title}
                   </h2>
                   
-                  <p className="carousel-summary" style={{ 
-                    color: '#ddd', 
-                    fontSize: '1.05rem', 
-                    lineHeight: 1.6, 
-                    marginBottom: '2rem', 
-                    height: '80px', 
-                    display: '-webkit-box', 
-                    WebkitLineClamp: 3, 
-                    WebkitBoxOrient: 'vertical', 
-                    overflow: 'hidden' 
-                  }}>
-                    {chapter.summary}
-                  </p>
+                  {(() => {
+                    const isNew = new Date().getTime() - new Date(chapter.createdAt).getTime() < 30 * 24 * 60 * 60 * 1000;
+                    const isBlurred = isSpoilerMode && isNew && !revealedSpoilers[chapter.id];
+
+                    return (
+                      <div 
+                        style={{ position: 'relative', marginBottom: '2rem', cursor: isBlurred ? 'pointer' : 'default' }}
+                        onClick={() => {
+                          if (isBlurred) {
+                            setRevealedSpoilers(prev => ({ ...prev, [chapter.id]: true }));
+                          }
+                        }}
+                      >
+                        <p className="carousel-summary" style={{ 
+                          color: '#ddd', 
+                          fontSize: '1.05rem', 
+                          lineHeight: 1.6, 
+                          height: '80px', 
+                          display: '-webkit-box', 
+                          WebkitLineClamp: 3, 
+                          WebkitBoxOrient: 'vertical', 
+                          overflow: 'hidden',
+                          filter: isBlurred ? 'blur(8px)' : 'none',
+                          transition: 'filter 0.3s ease',
+                          margin: 0
+                        }}>
+                          {chapter.summary}
+                        </p>
+                        {isBlurred && (
+                          <div style={{
+                            position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+                            display: 'flex', alignItems: 'center', justifyContent: 'flex-start',
+                            color: 'var(--color-primary)', fontWeight: 'bold', textShadow: '0 1px 3px rgba(0,0,0,0.8)'
+                          }}>
+                            <span>Click to reveal spoiler</span>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
 
                   <Link href={`/game/${chapter.gameId}/chapter/${chapter.id}`}>
                     <button className="btn btn-primary" style={{ padding: '0.8rem 2rem', fontSize: '1.1rem' }}>
