@@ -18,7 +18,7 @@ interface Chapter {
   category: string;
   isMain: boolean;
   slug?: string;
-  releaseDate?: string | Date;
+  releaseDate?: string | Date | null;
   game: { title: string };
 }
 
