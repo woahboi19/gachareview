@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface GameCardProps {
   id: string;
@@ -13,8 +14,8 @@ export default function GameCard({ slug, title, description, imageUrl }: GameCar
     <Link href={`/${slug}`}>
       <div className="glass-panel animate-fade-in card-hover" style={{ padding: '0', height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         {imageUrl && (
-          <div style={{ width: '100%', aspectRatio: '3/4', overflow: 'hidden', background: '#050505', display: 'flex', justifyContent: 'center', alignItems: 'center', borderBottom: '1px solid var(--color-surface-border)' }}>
-            <img src={imageUrl} alt={title} style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center' }} />
+          <div style={{ position: 'relative', width: '100%', aspectRatio: '3/4', overflow: 'hidden', background: '#050505', display: 'flex', justifyContent: 'center', alignItems: 'center', borderBottom: '1px solid var(--color-surface-border)' }}>
+            <Image src={imageUrl} alt={title} fill style={{ objectFit: 'contain', objectPosition: 'center' }} />
           </div>
         )}
         <div className="gamecard-content" style={{ padding: '1.5rem', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>

@@ -16,6 +16,7 @@ export default function TranslateButton({ originalText, onTranslated }: Translat
     // Determine the browser's preferred language for translation, default to Turkish if unavailable
     if (typeof navigator !== 'undefined' && navigator.language) {
       const browserLang = navigator.language.split('-')[0];
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTargetLang(browserLang);
     }
   }, []);

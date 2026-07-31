@@ -27,8 +27,8 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json(character, { status: 201 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error creating character:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 });
   }
 }

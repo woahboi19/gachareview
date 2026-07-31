@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { signIn, signOut } from 'next-auth/react';
 import type { Session } from 'next-auth';
 import SearchBar from './SearchBar';
@@ -16,6 +17,7 @@ export default function Header({ session }: HeaderProps) {
   const { isSpoilerMode, toggleSpoilerMode } = useSpoiler();
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLight(document.body.classList.contains('light-theme'));
     const observer = new MutationObserver(() => {
       setIsLight(document.body.classList.contains('light-theme'));
@@ -56,7 +58,7 @@ export default function Header({ session }: HeaderProps) {
             <Link href="/profile" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', padding: '0.2rem 0.5rem', borderRadius: '4px', transition: 'background 0.2s' }}>
               <span className="navbar-username" style={{ color: 'var(--color-text-main)', fontSize: '0.9rem' }}>{session.user.name}</span>
               {session.user.image ? (
-                <img src={session.user.image} alt="Avatar" style={{ width: '32px', height: '32px', borderRadius: '50%' }} />
+                <Image src={session.user.image} alt="Avatar" width={32} height={32} style={{ borderRadius: '50%' }} />
               ) : (
                 <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', fontWeight: 'bold' }}>
                   {session.user.name?.charAt(0).toUpperCase() || 'U'}

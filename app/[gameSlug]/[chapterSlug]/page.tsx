@@ -1,8 +1,10 @@
-import { prisma } from '../../../lib/prisma';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import ReviewSection from '../../../components/ReviewSection';
 import { auth } from '../../../auth';
+
+import { getCachedChapterBySlug } from '../../../lib/data';
 
 interface ChapterPageProps {
   params: Promise<{ gameSlug: string; chapterSlug: string }>;
@@ -12,19 +14,7 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
   const { gameSlug, chapterSlug } = await params;
   const session = await auth();
 
-  const chapter = await prisma.storyChapter.findFirst({
-    where: { 
-      slug: chapterSlug,
-      game: { slug: gameSlug }
-    },
-    include: {
-      game: true,
-      reviews: {
-        orderBy: { createdAt: 'desc' },
-        include: { user: true, upvotes: true }
-      }
-    }
-  });
+  const chapter = await getCachedChapterBySlug(gameSlug, chapterSlug);
 
   if (!chapter) {
     notFound();
@@ -64,12 +54,14 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
           }}>
              <div style={{
                position: 'absolute', top: -20, bottom: -20, left: -20, right: -20,
-               backgroundImage: `url(${chapter.imageUrl || chapter.game.imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center', filter: 'blur(20px) brightness(0.4)', zIndex: 0
+               backgroundImage: `url("${chapter.imageUrl || chapter.game.imageUrl}")`, backgroundSize: 'cover', backgroundPosition: 'center', filter: 'blur(20px) brightness(0.4)', zIndex: 0
              }} />
-             <div style={{
-               position: 'absolute', top: 0, bottom: 0, left: 0, right: 0,
-               backgroundImage: `url(${chapter.imageUrl || chapter.game.imageUrl})`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', zIndex: 1
-             }} />
+             <Image 
+               src={chapter.imageUrl || chapter.game.imageUrl || ''} 
+               alt={chapter.title} 
+               fill 
+               style={{ objectFit: 'contain', zIndex: 1 }} 
+             />
           </div>
         )}
 

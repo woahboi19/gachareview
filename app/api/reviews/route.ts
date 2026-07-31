@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 import { prisma } from '../../../lib/prisma';
 import { auth } from '../../../auth';
 
@@ -19,7 +20,11 @@ export async function POST(request: Request) {
     // Get gameId from chapter to link the review properly
     const chapter = await prisma.storyChapter.findUnique({
       where: { id: chapterId },
-      select: { gameId: true }
+      select: { 
+        gameId: true,
+        slug: true,
+        game: { select: { slug: true } }
+      }
     });
 
     const review = await prisma.review.create({
@@ -37,10 +42,15 @@ export async function POST(request: Request) {
       }
     });
 
+    if (chapter) {
+      revalidateTag(`chapter-${chapter.game.slug}-${chapter.slug}`, {});
+      revalidateTag(`game-${chapter.game.slug}`, {});
+    }
+
     return NextResponse.json(review, { status: 201 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error creating review:', error);
-    if (error.code === 'P2002') {
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
       return NextResponse.json({ error: 'You have already reviewed this chapter.' }, { status: 400 });
     }
     return NextResponse.json({ error: 'Failed to create review' }, { status: 500 });

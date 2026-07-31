@@ -13,6 +13,8 @@ type Game = {
   imageUrl: string | null;
 };
 
+type TabId = 'favorites' | 'playing' | 'completed' | 'dropped' | 'reviews' | 'settings';
+
 type ProfileTabsProps = {
   user: {
     id: string;
@@ -45,6 +47,20 @@ type ProfileTabsProps = {
   };
   isOwnProfile: boolean;
 };
+
+const TabButton = ({ id, label, count, activeTab, setActiveTab }: { id: TabId, label: string, count?: number, activeTab: TabId, setActiveTab: (id: TabId) => void }) => (
+  <button 
+    onClick={() => setActiveTab(id)}
+    style={{
+      background: 'none', border: 'none', color: activeTab === id ? 'var(--color-primary)' : 'var(--color-text-muted)',
+      fontSize: '1.2rem', fontWeight: activeTab === id ? 'bold' : 'normal', cursor: 'pointer',
+      borderBottom: activeTab === id ? '2px solid var(--color-primary)' : 'none', paddingBottom: '0.2rem',
+      textTransform: 'uppercase', fontFamily: 'var(--font-rajdhani)'
+    }}
+  >
+    {label} {count !== undefined && `(${count})`}
+  </button>
+);
 
 export default function ProfileTabs({ user, isOwnProfile }: ProfileTabsProps) {
   const [activeTab, setActiveTab] = useState<'favorites' | 'playing' | 'completed' | 'dropped' | 'reviews' | 'settings'>('favorites');
@@ -91,20 +107,6 @@ export default function ProfileTabs({ user, isOwnProfile }: ProfileTabsProps) {
     }
   };
 
-  const TabButton = ({ id, label, count }: { id: any, label: string, count?: number }) => (
-    <button 
-      onClick={() => setActiveTab(id)}
-      style={{
-        background: 'none', border: 'none', color: activeTab === id ? 'var(--color-primary)' : 'var(--color-text-muted)',
-        fontSize: '1.2rem', fontWeight: activeTab === id ? 'bold' : 'normal', cursor: 'pointer',
-        borderBottom: activeTab === id ? '2px solid var(--color-primary)' : 'none', paddingBottom: '0.2rem',
-        textTransform: 'uppercase', fontFamily: 'var(--font-rajdhani)'
-      }}
-    >
-      {label} {count !== undefined && `(${count})`}
-    </button>
-  );
-
   const renderGameGrid = (games: Game[], emptyMsg: string) => (
     <div>
       {games.length === 0 ? (
@@ -130,12 +132,12 @@ export default function ProfileTabs({ user, isOwnProfile }: ProfileTabsProps) {
     <div style={{ marginTop: '2rem' }}>
       {/* Tabs Navigation */}
       <div style={{ display: 'flex', gap: '1.5rem', borderBottom: '1px solid var(--color-surface-border)', paddingBottom: '1rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
-        <TabButton id="favorites" label="Favorites" count={favoriteGames.length} />
-        <TabButton id="playing" label="Playing" count={playingGames.length} />
-        <TabButton id="completed" label="Completed" count={completedGames.length} />
-        <TabButton id="dropped" label="Dropped" count={droppedGames.length} />
-        <TabButton id="reviews" label="Reviews" count={user.reviews.length} />
-        {isOwnProfile && <TabButton id="settings" label="Settings" />}
+        <TabButton id="favorites" label="Favorites" count={favoriteGames.length} activeTab={activeTab} setActiveTab={setActiveTab} />
+        <TabButton id="playing" label="Playing" count={playingGames.length} activeTab={activeTab} setActiveTab={setActiveTab} />
+        <TabButton id="completed" label="Completed" count={completedGames.length} activeTab={activeTab} setActiveTab={setActiveTab} />
+        <TabButton id="dropped" label="Dropped" count={droppedGames.length} activeTab={activeTab} setActiveTab={setActiveTab} />
+        <TabButton id="reviews" label="Reviews" count={user.reviews.length} activeTab={activeTab} setActiveTab={setActiveTab} />
+        {isOwnProfile && <TabButton id="settings" label="Settings" activeTab={activeTab} setActiveTab={setActiveTab} />}
       </div>
 
       {/* Tabs Content */}
