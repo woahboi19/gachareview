@@ -62,9 +62,9 @@ export default async function GamePage({ params }: GamePageProps) {
 
   // Sort categories: Categories with at least one 'isMain' chapter come first, and specifically prioritize "Phaethon's Story" or "Main Story"
   const sortedCategories = Object.entries(chaptersByCategory).sort(([catA, chapsA], [catB, chapsB]) => {
-    // Explicitly put Phaethon's Story or Main Story at the absolute top
-    if (catA === "Phaethon's Story" || catA === "Main Story") return -1;
-    if (catB === "Phaethon's Story" || catB === "Main Story") return 1;
+    // Explicitly put Phaethon's Story, Main Story, Archon Quest, or Trailblaze Mission at the absolute top
+    if (catA === "Phaethon's Story" || catA === "Main Story" || catA === "Archon Quest" || catA === "Trailblaze Mission") return -1;
+    if (catB === "Phaethon's Story" || catB === "Main Story" || catB === "Archon Quest" || catB === "Trailblaze Mission") return 1;
     
     const aIsMain = chapsA.some(c => c.isMain);
     const bIsMain = chapsB.some(c => c.isMain);
@@ -114,6 +114,76 @@ export default async function GamePage({ params }: GamePageProps) {
         </div>
       </div>
 
+      {/* Chapters Section */}
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem', borderLeft: '4px solid var(--color-primary)', paddingLeft: '0.75rem' }}>
+        <h2 style={{ fontSize: '1.5rem', margin: 0, textTransform: 'uppercase', fontFamily: 'var(--font-rajdhani)' }}>Chapters</h2>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', marginBottom: '4rem' }}>
+        {sortedCategories.length === 0 ? (
+          <EmptyState 
+            title="No chapters yet" 
+            description="There are currently no chapters available for this game. Check back later!" 
+          />
+        ) : (
+          sortedCategories.map(([category, chapters]) => {
+            const sortedChapters = [...chapters].sort((a, b) => {
+              return a.chapterNum - b.chapterNum;
+            });
+
+            return (
+              <div key={category}>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem', borderLeft: '4px solid var(--color-primary)', paddingLeft: '0.75rem' }}>
+                  <h2 style={{ fontSize: '1.25rem', margin: 0 }}>{category}</h2>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  {sortedChapters.map(chapter => {
+                    const chapReviews = chapter.reviews.length;
+                    const chapAvg = chapReviews > 0 
+                      ? (chapter.reviews.reduce((acc, r) => acc + r.rating, 0) / chapReviews).toFixed(1)
+                      : null;
+
+                    return (
+                      <Link key={chapter.id} href={`/${game.slug}/${chapter.slug}`}>
+                        <div className="glass-panel" style={{ cursor: 'pointer', display: 'flex', overflow: 'hidden' }}>
+                          {chapter.imageUrl && (
+                            <div style={{ position: 'relative', width: '80px', alignSelf: 'stretch', flexShrink: 0, background: 'var(--color-surface-border)' }}>
+                              <Image src={chapter.imageUrl} alt={chapter.title} fill style={{ objectFit: 'cover' }} />
+                            </div>
+                          )}
+                          <div style={{ padding: '1.25rem 1.5rem', flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div>
+                              <h3 style={{ marginBottom: '0.25rem', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <span>{chapter.title}</span>
+                                {chapter.releaseDate && (
+                                  <span style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem', background: 'rgba(255,255,255,0.1)', borderRadius: '12px', color: 'var(--color-text-muted)' }}>
+                                    {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: 'numeric' }).format(new Date(chapter.releaseDate))}
+                                  </span>
+                                )}
+                              </h3>
+                              <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', margin: '0.25rem 0 0 0' }}>{chapter.summary.substring(0, 120)}...</p>
+                            </div>
+                            <div style={{ color: chapAvg ? 'var(--color-text-main)' : 'var(--color-primary)', fontSize: '1.2rem', fontWeight: chapAvg ? 'bold' : 'normal', display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+                              {chapAvg ? (
+                                <>
+                                  <span style={{ color: '#f5c518' }}>★</span> {chapAvg}
+                                  <span style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', marginLeft: '0.5rem' }}>({chapReviews})</span>
+                                </>
+                              ) : (
+                                '★ Rate'
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
       {/* Characters Section */}
       {game.characters && game.characters.length > 0 && (
         <div style={{ marginBottom: '4rem' }}>
@@ -149,70 +219,6 @@ export default async function GamePage({ params }: GamePageProps) {
           </div>
         </div>
       )}
-
-      {/* Chapters Section */}
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem', borderLeft: '4px solid var(--color-primary)', paddingLeft: '0.75rem' }}>
-        <h2 style={{ fontSize: '1.5rem', margin: 0, textTransform: 'uppercase', fontFamily: 'var(--font-rajdhani)' }}>Chapters</h2>
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-        {sortedCategories.length === 0 ? (
-          <EmptyState 
-            title="No chapters yet" 
-            description="There are currently no chapters available for this game. Check back later!" 
-          />
-        ) : (
-          sortedCategories.map(([category, chapters]) => (
-            <div key={category}>
-              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem', borderLeft: '4px solid var(--color-primary)', paddingLeft: '0.75rem' }}>
-                <h2 style={{ fontSize: '1.25rem', margin: 0 }}>{category}</h2>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                {chapters.map(chapter => {
-                  const chapReviews = chapter.reviews.length;
-                  const chapAvg = chapReviews > 0 
-                    ? (chapter.reviews.reduce((acc, r) => acc + r.rating, 0) / chapReviews).toFixed(1)
-                    : null;
-
-                  return (
-                    <Link key={chapter.id} href={`/${game.slug}/${chapter.slug}`}>
-                      <div className="glass-panel" style={{ cursor: 'pointer', display: 'flex', overflow: 'hidden' }}>
-                        {chapter.imageUrl && (
-                          <div style={{ position: 'relative', width: '80px', alignSelf: 'stretch', flexShrink: 0, background: 'var(--color-surface-border)' }}>
-                            <Image src={chapter.imageUrl} alt={chapter.title} fill style={{ objectFit: 'cover' }} />
-                          </div>
-                        )}
-                        <div style={{ padding: '1.25rem 1.5rem', flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <div>
-                            <h3 style={{ marginBottom: '0.25rem', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                              <span>{chapter.title}</span>
-                              {chapter.releaseDate && (
-                                <span style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem', background: 'rgba(255,255,255,0.1)', borderRadius: '12px', color: 'var(--color-text-muted)' }}>
-                                  {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: 'numeric' }).format(new Date(chapter.releaseDate))}
-                                </span>
-                              )}
-                            </h3>
-                            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', margin: '0.25rem 0 0 0' }}>{chapter.summary.substring(0, 120)}...</p>
-                          </div>
-                          <div style={{ color: chapAvg ? 'var(--color-text-main)' : 'var(--color-primary)', fontSize: '1.2rem', fontWeight: chapAvg ? 'bold' : 'normal', display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
-                            {chapAvg ? (
-                              <>
-                                <span style={{ color: '#f5c518' }}>★</span> {chapAvg}
-                                <span style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', marginLeft: '0.5rem' }}>({chapReviews})</span>
-                              </>
-                            ) : (
-                              '★ Rate'
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          ))
-        )}
-      </div>
     </div>
   );
 }
