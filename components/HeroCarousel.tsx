@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useSpoiler } from './SpoilerProvider';
 
 interface Game {
@@ -85,13 +86,16 @@ export default function HeroCarousel({ chapters }: HeroCarouselProps) {
                 style={{
                   position: 'absolute',
                   top: 0, left: '30%', right: 0, bottom: 0,
-                  backgroundImage: `url(${bgImage})`,
-                  backgroundSize: 'contain',
-                  backgroundRepeat: 'no-repeat',
-                  backgroundPosition: 'right center',
                   zIndex: 1
                 }}
-              />
+              >
+                <Image 
+                  src={bgImage} 
+                  alt={chapter.title} 
+                  fill 
+                  style={{ objectFit: 'contain', objectPosition: 'right center' }} 
+                />
+              </div>
 
               {/* Gradient Overlay */}
               <div className="carousel-gradient" style={{
@@ -170,10 +174,31 @@ export default function HeroCarousel({ chapters }: HeroCarouselProps) {
                         {isBlurred && (
                           <div style={{
                             position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-                            display: 'flex', alignItems: 'center', justifyContent: 'flex-start',
-                            color: 'var(--color-primary)', fontWeight: 'bold', textShadow: '0 1px 3px rgba(0,0,0,0.8)'
+                            display: 'flex', alignItems: 'center', justifyContent: 'flex-start'
                           }}>
-                            <span>Click to reveal spoiler</span>
+                            <button 
+                              className="btn animate-pulse-glow"
+                              style={{
+                                background: 'rgba(21, 21, 21, 0.7)',
+                                border: '1px solid var(--color-primary)',
+                                color: 'var(--color-text-main)',
+                                backdropFilter: 'blur(8px)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                padding: '0.6rem 1.2rem',
+                                borderRadius: 'var(--radius-full)',
+                                textTransform: 'uppercase',
+                                fontSize: '0.85rem',
+                                letterSpacing: '0.05em'
+                              }}
+                            >
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                              </svg>
+                              Click to reveal spoiler
+                            </button>
                           </div>
                         )}
                       </div>

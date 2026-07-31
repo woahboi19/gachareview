@@ -25,6 +25,7 @@ export const getCachedAllGames = unstable_cache(
 export const getCachedRecentChapters = unstable_cache(
   async () => {
     return await prisma.storyChapter.findMany({
+      where: { releaseDate: { not: null } },
       orderBy: { releaseDate: 'desc' },
       take: 6,
       include: { game: true }
