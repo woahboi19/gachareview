@@ -17,7 +17,8 @@ interface Chapter {
   imageUrl: string | null;
   category: string;
   isMain: boolean;
-  createdAt?: string | Date;
+  slug?: string;
+  releaseDate?: string | Date | null;
   game: { title: string };
 }
 
@@ -25,12 +26,13 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
   const [chapters, setChapters] = useState<Chapter[]>(initialChapters);
   const [gameId, setGameId] = useState(games.length > 0 ? games[0].id : '');
   const [title, setTitle] = useState('');
+  const [shortCode, setShortCode] = useState('');
   const [chapterNum, setChapterNum] = useState('');
   const [summary, setSummary] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [category, setCategory] = useState('Main Story');
   const [isMain, setIsMain] = useState(false);
-  const [createdAt, setCreatedAt] = useState('');
+  const [releaseDate, setReleaseDate] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -46,7 +48,7 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ gameId, title, chapterNum, summary, imageUrl, category, isMain, createdAt: createdAt || undefined })
+        body: JSON.stringify({ gameId, title, shortCode, chapterNum, summary, imageUrl, category, isMain, releaseDate: releaseDate || undefined })
       });
 
       if (res.ok) {
@@ -61,9 +63,9 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
       } else {
         alert(`Failed to ${editingId ? 'update' : 'create'} chapter`);
       }
-    } catch (err) {
+    } catch (err: unknown) {
       console.error(err);
-      alert(`Error ${editingId ? 'updating' : 'creating'} chapter`);
+      alert(err instanceof Error ? err.message : `Error ${editingId ? 'updating' : 'creating'} chapter`);
     } finally {
       setIsSubmitting(false);
     }
@@ -72,28 +74,30 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
   const resetForm = () => {
     setEditingId(null);
     setTitle('');
+    setShortCode('');
     setChapterNum('');
     setSummary('');
     setImageUrl('');
     setCategory('Main Story');
     setIsMain(false);
-    setCreatedAt('');
+    setReleaseDate('');
   };
 
   const startEdit = (chapter: Chapter) => {
     setEditingId(chapter.id);
     setGameId(chapter.gameId || (games.length > 0 ? games[0].id : ''));
     setTitle(chapter.title);
+    setShortCode(chapter.slug || '');
     setChapterNum(chapter.chapterNum.toString());
     setSummary(chapter.summary);
     setImageUrl(chapter.imageUrl || '');
     setCategory(chapter.category || 'Main Story');
     setIsMain(chapter.isMain || false);
     
-    if (chapter.createdAt) {
-      setCreatedAt(new Date(chapter.createdAt).toISOString().split('T')[0]);
+    if (chapter.releaseDate) {
+      setReleaseDate(new Date(chapter.releaseDate).toISOString().split('T')[0]);
     } else {
-      setCreatedAt('');
+      setReleaseDate('');
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -146,6 +150,10 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
                 <input type="text" className="form-textarea" style={{ minHeight: '40px' }} value={title} onChange={e => setTitle(e.target.value)} required />
               </div>
               <div className="form-group" style={{ width: '150px' }}>
+                <label className="form-label">Short URL Code</label>
+                <input type="text" className="form-textarea" style={{ minHeight: '40px' }} value={shortCode} onChange={e => setShortCode(e.target.value)} placeholder="e.g. 1001" />
+              </div>
+              <div className="form-group" style={{ width: '100px' }}>
                 <label className="form-label">Chapter #</label>
                 <input type="number" className="form-textarea" style={{ minHeight: '40px' }} value={chapterNum} onChange={e => setChapterNum(e.target.value)} required />
               </div>
@@ -167,7 +175,7 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
               </div>
               <div className="form-group" style={{ width: '200px' }}>
                 <label className="form-label">Release Date (Optional)</label>
-                <input type="date" className="form-textarea" style={{ minHeight: '40px', colorScheme: 'dark' }} value={createdAt} onChange={e => setCreatedAt(e.target.value)} />
+                <input type="date" className="form-textarea" style={{ minHeight: '40px', colorScheme: 'dark' }} value={releaseDate} onChange={e => setReleaseDate(e.target.value)} />
               </div>
             </div>
 
@@ -193,7 +201,7 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
               <h3 style={{ fontSize: '1.2rem', marginBottom: '0.2rem' }}>{chapter.title}</h3>
             </div>
             <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <button className="btn btn-glass" style={{ padding: '0.4rem 1rem' }} onClick={() => startEdit(chapter as any)}>
+              <button className="btn btn-glass" style={{ padding: '0.4rem 1rem' }} onClick={() => startEdit(chapter)}>
                 Edit
               </button>
               <button className="btn btn-primary" style={{ background: '#ff3b30', color: '#fff', padding: '0.4rem 1rem' }} onClick={() => handleDelete(chapter.id)}>

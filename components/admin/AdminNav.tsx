@@ -39,6 +39,11 @@ export default function AdminNav() {
           Manage Chapters
         </div>
       </Link>
+      <Link href="/admin/characters">
+        <div style={navItemStyle('/admin/characters')}>
+          Manage Characters
+        </div>
+      </Link>
     </nav>
   );
 }

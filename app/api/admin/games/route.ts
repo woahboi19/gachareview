@@ -2,6 +2,16 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '../../../../lib/prisma';
 import { auth } from '../../../../auth';
 
+function slugify(text: string) {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-');
+}
+
 export async function POST(request: NextRequest) {
   try {
     const session = await auth();
@@ -16,9 +26,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    let slug = slugify(title);
+    
+    const reservedSlugs = ['login', 'admin', 'api', 'profile', 'game', 'search'];
+    if (reservedSlugs.includes(slug)) {
+      slug = `${slug}-game`;
+    }
+    
+    // Simple check to avoid duplicates in case of same title
+    const existing = await prisma.game.findUnique({ where: { slug } });
+    if (existing) {
+      slug = `${slug}-${Math.random().toString(36).substring(2, 6)}`;
+    }
+
     const game = await prisma.game.create({
       data: {
         title,
+        slug,
         description,
         developer,
         imageUrl: imageUrl || null
