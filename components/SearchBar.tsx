@@ -56,11 +56,11 @@ export default function SearchBar() {
   const hasResults = results.games.length > 0 || results.chapters.length > 0;
 
   return (
-    <div ref={wrapperRef} className="search-wrapper" style={{ position: 'relative', width: '100%', maxWidth: '450px' }}>
+    <div ref={wrapperRef} className="search-wrapper" style={{ position: 'relative', width: '100%', maxWidth: '600px' }}>
       <div style={{ position: 'relative' }}>
         <input
           type="text"
-          placeholder="Search games or chapters..."
+          placeholder="Search games, characters, or chapters..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => { if (query.trim()) setIsOpen(true); }}

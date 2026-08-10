@@ -6,12 +6,12 @@ import { Toaster } from 'react-hot-toast';
 import { auth } from "../auth";
 import { prisma } from "../lib/prisma";
 import Providers from "../components/Providers";
-import { Rajdhani, Space_Grotesk } from 'next/font/google';
+import { Sora, Space_Grotesk } from 'next/font/google';
 
-const rajdhani = Rajdhani({ 
+const sora = Sora({ 
   subsets: ['latin'], 
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-rajdhani'
+  weight: ['400', '500', '600', '700', '800'],
+  variable: '--font-sora'
 });
 
 const spaceGrotesk = Space_Grotesk({
@@ -40,11 +40,11 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="en" className={`${rajdhani.variable} ${spaceGrotesk.variable}`}>
+    <html lang="en" className={`${sora.variable} ${spaceGrotesk.variable}`}>
       <body>
         <Providers initialSpoilerMode={initialSpoilerMode}>
           <Header session={session} />
-          <main className="container" style={{ paddingBottom: '4rem', minHeight: '80vh' }}>
+          <main className="container" style={{ paddingTop: '90px', paddingBottom: '4rem', minHeight: '80vh' }}>
             {children}
           </main>
           <Footer />

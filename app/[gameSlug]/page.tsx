@@ -5,15 +5,20 @@ import { notFound } from 'next/navigation';
 import { auth } from '../../auth';
 import FavoriteButton from '../../components/FavoriteButton';
 import EmptyState from '../../components/EmptyState';
+import GameStatusSelector from '../../components/GameStatusSelector';
+import ReviewSection from '../../components/ReviewSection';
 
 import { getCachedGameBySlug } from '../../lib/data';
 
 interface GamePageProps {
   params: Promise<{ gameSlug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default async function GamePage({ params }: GamePageProps) {
+export default async function GamePage({ params, searchParams }: GamePageProps) {
   const { gameSlug } = await params;
+  const searchParamsResolved = await searchParams;
+  const currentTab = typeof searchParamsResolved.tab === 'string' ? searchParamsResolved.tab : 'chapters';
   
   const game = await getCachedGameBySlug(gameSlug);
 
@@ -37,18 +42,29 @@ export default async function GamePage({ params }: GamePageProps) {
     isFavorited = !!favorite;
   }
 
-  // Calculate game overall rating
+  // Calculate game overall rating from global reviews
   let totalRating = 0;
-  let totalReviews = 0;
+  let totalReviews = game.reviews?.length || 0;
 
-  game.chapters.forEach((chapter) => {
-    chapter.reviews.forEach((review) => {
+  if (game.reviews) {
+    game.reviews.forEach((review) => {
       totalRating += review.rating;
-      totalReviews += 1;
     });
-  });
+  }
 
   const averageRating = totalReviews > 0 ? (totalRating / totalReviews).toFixed(1) : null;
+
+  // Find user's game status
+  let userGameStatus = null;
+  if (userId && game.userStatuses) {
+    const statusObj = game.userStatuses.find(s => s.userId === userId);
+    if (statusObj) userGameStatus = statusObj.status;
+  }
+
+  // Calculate Community Stats
+  const playingCount = game.userStatuses?.filter(s => s.status === 'PLAYING').length || 0;
+  const completedCount = game.userStatuses?.filter(s => s.status === 'COMPLETED').length || 0;
+  const droppedCount = game.userStatuses?.filter(s => s.status === 'DROPPED').length || 0;
 
   // Group chapters by category
   const chaptersByCategory = game.chapters.reduce((acc, chapter) => {
@@ -76,49 +92,87 @@ export default async function GamePage({ params }: GamePageProps) {
   return (
     <div className="animate-fade-in">
       {/* Cinematic Header */}
-      <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start', flexWrap: 'wrap', marginBottom: '3rem', marginTop: '1rem' }}>
+      <div className="game-detail-header-container">
         {game.imageUrl && (
-          <div style={{ position: 'relative', flex: '0 0 250px', aspectRatio: '3/4', borderRadius: 'var(--radius-md)', overflow: 'hidden', boxShadow: '0 8px 16px rgba(0,0,0,0.3)', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'var(--color-surface-border)' }}>
-            <Image src={game.imageUrl} alt={game.title} fill style={{ objectFit: 'contain', objectPosition: 'center' }} />
+          <div className="game-detail-image-container">
+            <Image src={game.imageUrl} alt={game.title} fill sizes="(max-width: 768px) 100vw, 250px" priority={true} style={{ objectFit: 'contain', objectPosition: 'center' }} />
           </div>
         )}
-        <div style={{ flex: '1 1 400px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <div className="game-detail-info-container">
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div className="game-detail-title-row">
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.2rem' }}>
-                  <h1 style={{ fontSize: '3rem', fontWeight: 800, margin: 0 }}>{game.title}</h1>
+                <div className="game-detail-title-group" style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+                  <h1 className="game-detail-title">{game.title}</h1>
                   <FavoriteButton gameId={game.id} initialIsFavorited={isFavorited} isLoggedIn={!!session} />
+                  <GameStatusSelector gameId={game.id} initialStatus={userGameStatus} isLoggedIn={!!session} />
                 </div>
-                <p style={{ color: 'var(--color-primary)', fontWeight: '600', marginBottom: '1.5rem', fontSize: '1.1rem' }}>{game.developer}</p>
+                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+                  {game.genres?.map(genre => (
+                    <span key={genre.id} style={{ padding: '0.2rem 0.6rem', fontSize: '0.8rem', background: 'var(--color-primary)', color: 'white', borderRadius: '12px', fontWeight: 'bold' }}>
+                      {genre.name}
+                    </span>
+                  ))}
+                </div>
+                <p className="game-detail-developer">{game.developer}</p>
+                
+                {/* Community Stats */}
+                <div style={{ display: 'flex', gap: '1.5rem', marginTop: '1rem', fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+                  <div><strong style={{ color: 'var(--color-text-main)' }}>{playingCount}</strong> Playing</div>
+                  <div><strong style={{ color: 'var(--color-text-main)' }}>{completedCount}</strong> Completed</div>
+                  <div><strong style={{ color: 'var(--color-text-main)' }}>{droppedCount}</strong> Dropped</div>
+                </div>
               </div>
               {/* IMDB Style Rating Widget */}
-              <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.05)', padding: '0.5rem 1rem', borderRadius: '8px' }}>
-                <div style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.2rem' }}>Rating</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <span style={{ color: '#f5c518', fontSize: '1.8rem' }}>★</span>
+              <div className="game-detail-rating-widget">
+                <div className="game-detail-rating-label">Rating</div>
+                <div className="game-detail-rating-score-row">
+                  <span className="game-detail-rating-star">★</span>
                   <div>
-                    <span style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{averageRating || '-'}</span>
-                    <span style={{ color: 'var(--color-text-muted)' }}>/5</span>
+                    <span className="game-detail-rating-score">{averageRating || '-'}</span>
+                    <span className="game-detail-rating-max">/5</span>
                   </div>
                 </div>
-                <div style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', marginTop: '0.2rem' }}>
+                <div className="game-detail-rating-count">
                   {totalReviews} {totalReviews === 1 ? 'Review' : 'Reviews'}
                 </div>
               </div>
             </div>
             
 
-            <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem', lineHeight: 1.6 }}>{game.description}</p>
+            <p className="game-detail-desc">{game.description}</p>
           </div>
         </div>
       </div>
 
-      {/* Chapters Section */}
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem', borderLeft: '4px solid var(--color-primary)', paddingLeft: '0.75rem' }}>
-        <h2 style={{ fontSize: '1.5rem', margin: 0, textTransform: 'uppercase', fontFamily: 'var(--font-rajdhani)' }}>Chapters</h2>
+      {/* Tabs Navigation */}
+      <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem', borderBottom: '1px solid var(--color-surface-border)', paddingBottom: '1rem' }}>
+        <Link href={`/${game.slug}?tab=chapters`} scroll={false}>
+          <button className={`btn ${currentTab === 'chapters' ? 'btn-primary' : 'btn-glass'}`} style={{ padding: '0.6rem 1.5rem', borderRadius: '20px', fontWeight: 'bold' }}>
+            Chapters
+          </button>
+        </Link>
+        <Link href={`/${game.slug}?tab=characters`} scroll={false}>
+          <button className={`btn ${currentTab === 'characters' ? 'btn-primary' : 'btn-glass'}`} style={{ padding: '0.6rem 1.5rem', borderRadius: '20px', fontWeight: 'bold' }}>
+            Characters
+          </button>
+        </Link>
+        <Link href={`/${game.slug}?tab=reviews`} scroll={false}>
+          <button className={`btn ${currentTab === 'reviews' ? 'btn-primary' : 'btn-glass'}`} style={{ padding: '0.6rem 1.5rem', borderRadius: '20px', fontWeight: 'bold' }}>
+            Game Reviews
+          </button>
+        </Link>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', marginBottom: '4rem' }}>
+
+      <div style={{ marginTop: '2rem' }}>
+        {/* Chapters Section */}
+        {currentTab === 'chapters' && (
+          <div>
+            <div className="game-detail-section-header" style={{ marginBottom: '1.5rem' }}>
+              <h2 className="game-detail-section-title">Chapters</h2>
+            </div>
+            <div className="game-detail-chapter-list">
+
         {sortedCategories.length === 0 ? (
           <EmptyState 
             title="No chapters yet" 
@@ -127,15 +181,19 @@ export default async function GamePage({ params }: GamePageProps) {
         ) : (
           sortedCategories.map(([category, chapters]) => {
             const sortedChapters = [...chapters].sort((a, b) => {
+              if (a.releaseDate && b.releaseDate) {
+                const diff = new Date(a.releaseDate).getTime() - new Date(b.releaseDate).getTime();
+                if (diff !== 0) return diff;
+              }
               return a.chapterNum - b.chapterNum;
             });
 
             return (
               <div key={category}>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem', borderLeft: '4px solid var(--color-primary)', paddingLeft: '0.75rem' }}>
-                  <h2 style={{ fontSize: '1.25rem', margin: 0 }}>{category}</h2>
+                <div className="game-detail-chapter-category">
+                  <h2 className="game-detail-chapter-category-title">{category}</h2>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <div className="game-detail-chapter-grid">
                   {sortedChapters.map(chapter => {
                     const chapReviews = chapter.reviews.length;
                     const chapAvg = chapReviews > 0 
@@ -144,25 +202,33 @@ export default async function GamePage({ params }: GamePageProps) {
 
                     return (
                       <Link key={chapter.id} href={`/${game.slug}/${chapter.slug}`}>
-                        <div className="glass-panel" style={{ cursor: 'pointer', display: 'flex', overflow: 'hidden' }}>
+                        <div className="glass-panel chapter-card" style={{ cursor: 'pointer', display: 'flex', overflow: 'hidden' }}>
                           {chapter.imageUrl && (
-                            <div style={{ position: 'relative', width: '80px', alignSelf: 'stretch', flexShrink: 0, background: 'var(--color-surface-border)' }}>
-                              <Image src={chapter.imageUrl} alt={chapter.title} fill style={{ objectFit: 'cover' }} />
+                            <div className="chapter-card-img-container" style={{ position: 'relative', width: '80px', alignSelf: 'stretch', flexShrink: 0, background: 'var(--color-surface-border)' }}>
+                              <Image src={chapter.imageUrl} alt={chapter.title} fill sizes="(max-width: 768px) 100vw, 80px" style={{ objectFit: 'cover' }} />
                             </div>
                           )}
-                          <div style={{ padding: '1.25rem 1.5rem', flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <div className="chapter-card-content" style={{ padding: '1.25rem 1.5rem', flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <div>
-                              <h3 style={{ marginBottom: '0.25rem', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                              <h3 className="game-detail-chapter-card-header" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                  <span className={`chapter-badge badge-${chapter.chapterType?.toLowerCase() || 'main'}`}>
+                                    {chapter.chapterType || 'MAIN'}
+                                  </span>
+                                  {chapter.chapterCode && (
+                                    <span className="chapter-code">{chapter.chapterCode}</span>
+                                  )}
+                                </div>
                                 <span>{chapter.title}</span>
                                 {chapter.releaseDate && (
-                                  <span style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem', background: 'rgba(255,255,255,0.1)', borderRadius: '12px', color: 'var(--color-text-muted)' }}>
+                                  <span className="game-detail-chapter-date-badge">
                                     {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: 'numeric' }).format(new Date(chapter.releaseDate))}
                                   </span>
                                 )}
                               </h3>
-                              <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', margin: '0.25rem 0 0 0' }}>{chapter.summary.substring(0, 120)}...</p>
+                              <p className="game-detail-chapter-summary">{chapter.summary.substring(0, 120)}...</p>
                             </div>
-                            <div style={{ color: chapAvg ? 'var(--color-text-main)' : 'var(--color-primary)', fontSize: '1.2rem', fontWeight: chapAvg ? 'bold' : 'normal', display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+                            <div className="game-detail-chapter-rating" style={{ color: chapAvg ? 'var(--color-text-main)' : 'var(--color-primary)', fontWeight: chapAvg ? 'bold' : 'normal' }}>
                               {chapAvg ? (
                                 <>
                                   <span style={{ color: '#f5c518' }}>★</span> {chapAvg}
@@ -183,32 +249,34 @@ export default async function GamePage({ params }: GamePageProps) {
           })
         )}
       </div>
-
-      {/* Characters Section */}
-      {game.characters && game.characters.length > 0 && (
-        <div style={{ marginBottom: '4rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem', borderLeft: '4px solid var(--color-primary)', paddingLeft: '0.75rem' }}>
-            <h2 style={{ fontSize: '1.5rem', margin: 0, textTransform: 'uppercase', fontFamily: 'var(--font-rajdhani)' }}>Characters</h2>
           </div>
-          <div className="grid-cards" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))' }}>
-            {game.characters.map((char) => (
-              <div key={char.id} className="glass-panel" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+        )}
+
+        {/* Characters Section */}
+        {currentTab === 'characters' && game.characters && (
+          <div className="game-detail-character-container">
+            <div className="game-detail-section-header" style={{ marginBottom: '1.5rem' }}>
+              <h2 className="game-detail-section-title">Characters</h2>
+            </div>
+            <div className="grid-cards">
+              {game.characters.map((char) => (
+                <div key={char.id} className="glass-panel game-detail-character-card">
                 {char.imageUrl ? (
-                  <div style={{ position: 'relative', width: '100%', height: '200px', background: 'var(--color-surface-border)', overflow: 'hidden' }}>
-                    <Image src={char.imageUrl} alt={char.name} fill style={{ objectFit: 'cover' }} />
+                  <div className="game-detail-character-image-container">
+                    <Image src={char.imageUrl} alt={char.name} fill sizes="(max-width: 768px) 100vw, 300px" style={{ objectFit: 'cover', objectPosition: 'top' }} />
                   </div>
                 ) : (
-                  <div style={{ width: '100%', height: '200px', background: 'var(--color-surface-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-text-muted)' }}>
+                  <div className="game-detail-character-no-image">
                     No Image
                   </div>
                 )}
-                <div style={{ padding: '1rem' }}>
-                  <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.2rem', fontFamily: 'var(--font-rajdhani)', textTransform: 'uppercase' }}>{char.name}</h3>
-                  <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', margin: '0 0 1rem 0', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                <div className="game-detail-character-info">
+                  <h3 className="game-detail-character-name">{char.name}</h3>
+                  <p className="game-detail-character-lore">
                     {char.lore}
                   </p>
                   {(char.voiceActorEN || char.voiceActorJP) && (
-                    <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', borderTop: '1px solid var(--color-surface-border)', paddingTop: '0.5rem' }}>
+                    <div className="game-detail-character-va">
                       {char.voiceActorEN && <div><strong>EN:</strong> {char.voiceActorEN}</div>}
                       {char.voiceActorJP && <div><strong>JP:</strong> {char.voiceActorJP}</div>}
                     </div>
@@ -218,7 +286,20 @@ export default async function GamePage({ params }: GamePageProps) {
             ))}
           </div>
         </div>
-      )}
+        )}
+
+        {/* Game Reviews Section */}
+        {currentTab === 'reviews' && (
+          <div>
+            <h2 className="game-detail-section-title">Game Reviews</h2>
+            <p style={{ color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
+              What do you think about the overall game (gameplay, gacha rates, graphics, etc.)? 
+              For specific story feedback, please review the individual chapters.
+            </p>
+            <ReviewSection gameId={game.id} initialReviews={game.reviews || []} session={session} />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

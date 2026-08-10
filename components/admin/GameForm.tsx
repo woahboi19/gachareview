@@ -9,6 +9,8 @@ interface Game {
   description: string;
   developer: string;
   imageUrl: string | null;
+  isEditorsPick?: boolean;
+  genres?: { name: string }[];
 }
 
 export default function GameForm({ initialGames }: { initialGames: Game[] }) {
@@ -17,6 +19,8 @@ export default function GameForm({ initialGames }: { initialGames: Game[] }) {
   const [description, setDescription] = useState('');
   const [developer, setDeveloper] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [isEditorsPick, setIsEditorsPick] = useState(false);
+  const [genreNames, setGenreNames] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -32,7 +36,7 @@ export default function GameForm({ initialGames }: { initialGames: Game[] }) {
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, description, developer, imageUrl })
+        body: JSON.stringify({ title, description, developer, imageUrl, isEditorsPick, genreNames })
       });
 
       if (res.ok) {
@@ -61,6 +65,8 @@ export default function GameForm({ initialGames }: { initialGames: Game[] }) {
     setDescription('');
     setDeveloper('');
     setImageUrl('');
+    setIsEditorsPick(false);
+    setGenreNames('');
   };
 
   const startEdit = (game: Game) => {
@@ -69,6 +75,8 @@ export default function GameForm({ initialGames }: { initialGames: Game[] }) {
     setDescription(game.description);
     setDeveloper(game.developer);
     setImageUrl(game.imageUrl || '');
+    setIsEditorsPick(game.isEditorsPick || false);
+    setGenreNames(game.genres ? game.genres.map(g => g.name).join(', ') : '');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -114,6 +122,14 @@ export default function GameForm({ initialGames }: { initialGames: Game[] }) {
           <div className="form-group">
             <label className="form-label">Image URL (e.g. /images/genshin.webp)</label>
             <input type="text" className="form-textarea" style={{ minHeight: '40px' }} value={imageUrl} onChange={e => setImageUrl(e.target.value)} />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Genres (Comma separated)</label>
+            <input type="text" className="form-textarea" style={{ minHeight: '40px' }} placeholder="Action RPG, Strategy" value={genreNames} onChange={e => setGenreNames(e.target.value)} />
+          </div>
+          <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <input type="checkbox" id="isEditorsPick" checked={isEditorsPick} onChange={e => setIsEditorsPick(e.target.checked)} />
+            <label htmlFor="isEditorsPick" className="form-label" style={{ margin: 0, cursor: 'pointer' }}>Editor&apos;s Pick 🏆</label>
           </div>
           <div className="form-group">
             <label className="form-label">Description</label>

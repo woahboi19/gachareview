@@ -87,7 +87,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
             flexShrink: 0,
             transform: 'translateY(20px)'
           }}>
-            <Image src={avatarUrl} alt={displayName} fill style={{ objectFit: 'cover' }} />
+            <Image src={avatarUrl} alt={displayName} fill sizes="120px" style={{ objectFit: 'cover' }} />
           </div>
 
           <div style={{ paddingBottom: '0.5rem' }}>

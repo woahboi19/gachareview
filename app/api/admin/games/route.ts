@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { title, description, developer, imageUrl } = body;
+    const { title, description, developer, imageUrl, isEditorsPick, genreNames } = body;
 
     if (!title || !description || !developer) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -39,13 +39,23 @@ export async function POST(request: NextRequest) {
       slug = `${slug}-${Math.random().toString(36).substring(2, 6)}`;
     }
 
+    const genreList = typeof genreNames === 'string' ? genreNames.split(',').map((s: string) => s.trim()).filter(Boolean) : [];
+    const connectOrCreateGenres = genreList.map((name: string) => ({
+      where: { name },
+      create: { name, slug: slugify(name) }
+    }));
+
     const game = await prisma.game.create({
       data: {
         title,
         slug,
         description,
         developer,
-        imageUrl: imageUrl || null
+        imageUrl: imageUrl || null,
+        isEditorsPick: !!isEditorsPick,
+        genres: {
+          connectOrCreate: connectOrCreateGenres
+        }
       }
     });
 
