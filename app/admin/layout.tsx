@@ -1,12 +1,32 @@
 import { auth } from '../../auth';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 import AdminNav from '../../components/admin/AdminNav';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
 
-  if (!session || session.user.role !== 'ADMIN') {
-    redirect('/');
+  if (!session) {
+    redirect('/login');
+  }
+
+  if (session.user.role !== 'ADMIN') {
+    return (
+      <div style={{ minHeight: '70vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+        <div className="glass-panel" style={{ padding: '3rem', maxWidth: '480px', width: '100%', textAlign: 'center' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔒</div>
+          <h1 style={{ fontSize: '1.8rem', marginBottom: '0.5rem', color: '#ff4d4f' }}>Access Denied</h1>
+          <p style={{ color: 'var(--color-text-muted)', marginBottom: '1.5rem', lineHeight: '1.6' }}>
+            Logged in as <strong>{session.user.name || session.user.email}</strong>.<br />
+            Your current role is <span style={{ padding: '0.2rem 0.5rem', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', fontWeight: 600 }}>{session.user.role || 'USER'}</span>.<br />
+            Administrator privileges are required to access this area.
+          </p>
+          <Link href="/" className="btn btn-primary" style={{ display: 'inline-block', padding: '0.75rem 1.5rem', borderRadius: 'var(--radius-md)' }}>
+            Return to Homepage
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   return (

@@ -75,6 +75,8 @@ model Game {
   favoritedBy FavoriteGame[]
   userStatuses UserGameStatus[]
   characters  Character[]
+  averageScore Float    @default(0.0)
+  isEditorsPick Boolean @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -90,6 +92,8 @@ model StoryChapter {
   category    String   @default("Main Story")
   isMain      Boolean  @default(false)
   releaseDate DateTime?
+  chapterCode String?
+  chapterType String   @default("MAIN")
   game        Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
   reviews     Review[]
   createdAt   DateTime @default(now())

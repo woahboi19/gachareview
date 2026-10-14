@@ -12,10 +12,19 @@ export default async function AdminCharacters() {
     orderBy: { title: 'asc' }
   });
 
+  const characters = await prisma.character.findMany({
+    include: {
+      game: {
+        select: { title: true }
+      }
+    },
+    orderBy: { createdAt: 'desc' }
+  });
+
   return (
     <div>
       <h1 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '2rem', fontFamily: 'var(--font-rajdhani)' }}>Manage Characters</h1>
-      <CharactersClient games={games} />
+      <CharactersClient games={games} initialCharacters={characters} />
     </div>
   );
 }

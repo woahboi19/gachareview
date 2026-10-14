@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 interface Game {
   id: string;
@@ -35,6 +36,8 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
   const [releaseDate, setReleaseDate] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedGameFilter, setSelectedGameFilter] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,17 +58,20 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
         const savedChapter = await res.json();
         if (editingId) {
           setChapters(chapters.map(c => c.id === editingId ? savedChapter : c));
+          toast.success('Chapter updated successfully!');
         } else {
           setChapters([savedChapter, ...chapters]);
+          toast.success('Chapter created successfully!');
         }
         resetForm();
         router.refresh();
       } else {
-        alert(`Failed to ${editingId ? 'update' : 'create'} chapter`);
+        const data = await res.json().catch(() => ({}));
+        toast.error(data.error || `Failed to ${editingId ? 'update' : 'create'} chapter`);
       }
     } catch (err: unknown) {
       console.error(err);
-      alert(err instanceof Error ? err.message : `Error ${editingId ? 'updating' : 'creating'} chapter`);
+      toast.error(err instanceof Error ? err.message : `Error ${editingId ? 'updating' : 'creating'} chapter`);
     } finally {
       setIsSubmitting(false);
     }
@@ -109,15 +115,30 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
       const res = await fetch(`/api/admin/chapters/${id}`, { method: 'DELETE' });
       if (res.ok) {
         setChapters(chapters.filter(c => c.id !== id));
+        toast.success('Chapter deleted successfully');
         router.refresh();
       } else {
-        alert('Failed to delete chapter');
+        const data = await res.json().catch(() => ({}));
+        toast.error(data.error || 'Failed to delete chapter');
       }
     } catch (err) {
       console.error(err);
-      alert('Error deleting chapter');
+      toast.error('Error deleting chapter');
     }
   };
+
+  const filteredChapters = chapters.filter(c => {
+    if (selectedGameFilter && c.gameId !== selectedGameFilter) return false;
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      const matchTitle = c.title.toLowerCase().includes(q);
+      const matchCategory = (c.category || '').toLowerCase().includes(q);
+      const matchNum = c.chapterNum.toString().includes(q);
+      const matchGame = c.game?.title?.toLowerCase().includes(q);
+      return matchTitle || matchCategory || matchNum || matchGame;
+    }
+    return true;
+  });
 
   return (
     <div>
@@ -190,13 +211,44 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
         )}
       </div>
 
-      <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>Existing Chapters</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
+        <div>
+          <h2 style={{ fontSize: '1.5rem', margin: 0 }}>Existing Chapters</h2>
+          <span style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
+            Showing {filteredChapters.length} of {chapters.length} chapters
+          </span>
+        </div>
+        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+          <select 
+            value={selectedGameFilter} 
+            onChange={e => setSelectedGameFilter(e.target.value)}
+            className="form-textarea"
+            style={{ minHeight: '38px', padding: '0.4rem 0.8rem', background: 'var(--color-surface)' }}
+          >
+            <option value="">All Games ({chapters.length})</option>
+            {games.map(g => (
+              <option key={g.id} value={g.id}>
+                {g.title} ({chapters.filter(c => c.gameId === g.id).length})
+              </option>
+            ))}
+          </select>
+          <input 
+            type="text" 
+            placeholder="Search chapters..."
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            className="form-textarea"
+            style={{ minHeight: '38px', minWidth: '220px', padding: '0.4rem 0.8rem' }}
+          />
+        </div>
+      </div>
+
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        {chapters.map(chapter => (
+        {filteredChapters.map(chapter => (
           <div key={chapter.id} className="glass-panel" style={{ padding: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <p style={{ color: 'var(--color-primary)', fontSize: '0.8rem', textTransform: 'uppercase', fontWeight: 800, marginBottom: '0.2rem' }}>
-                {chapter.game.title} - {chapter.category || 'Main Story'} {chapter.isMain && <span style={{ color: 'var(--color-primary)' }}>(Main)</span>} - Ch. {chapter.chapterNum}
+                {chapter.game?.title} - {chapter.category || 'Main Story'} {chapter.isMain && <span style={{ color: 'var(--color-primary)' }}>(Main)</span>} - Ch. {chapter.chapterNum}
               </p>
               <h3 style={{ fontSize: '1.2rem', marginBottom: '0.2rem' }}>{chapter.title}</h3>
             </div>
@@ -210,7 +262,11 @@ export default function ChapterForm({ initialChapters, games }: { initialChapter
             </div>
           </div>
         ))}
-        {chapters.length === 0 && <p style={{ color: 'var(--color-text-muted)' }}>No chapters found.</p>}
+        {filteredChapters.length === 0 && (
+          <p style={{ color: 'var(--color-text-muted)' }}>
+            {chapters.length === 0 ? 'No chapters found.' : 'No chapters match the selected filter.'}
+          </p>
+        )}
       </div>
     </div>
   );

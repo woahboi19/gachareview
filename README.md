@@ -37,14 +37,15 @@ The platform allows players to catch up on story summaries, track chapters, and 
 3. **Set up Environment Variables**
    Create a `.env` file in the root directory and add the following:
    ```env
-   # SQLite for local development (Change to Postgres URL for production)
-   DATABASE_URL="file:./dev.db"
+   # PostgreSQL / Supabase
+   DATABASE_URL="postgresql://user:password@host:6543/postgres?pgbouncer=true"
+   DIRECT_URL="postgresql://user:password@host:5432/postgres"
 
    # NextAuth
    NEXTAUTH_URL="http://localhost:3000"
-   NEXTAUTH_SECRET="your_super_secret_string"
+   AUTH_SECRET="your_super_secret_string"
 
-   # OAuth Providers (Optional for local testing if using Credentials)
+   # Discord OAuth
    DISCORD_CLIENT_ID="your_discord_id"
    DISCORD_CLIENT_SECRET="your_discord_secret"
    ```

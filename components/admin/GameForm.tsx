@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 interface Game {
   id: string;
@@ -39,17 +40,20 @@ export default function GameForm({ initialGames }: { initialGames: Game[] }) {
         const savedGame = await res.json();
         if (editingId) {
           setGames(games.map(g => g.id === editingId ? savedGame : g));
+          toast.success('Game updated successfully!');
         } else {
           setGames([savedGame, ...games]);
+          toast.success('Game added successfully!');
         }
         resetForm();
         router.refresh();
       } else {
-        alert(`Failed to ${editingId ? 'update' : 'create'} game`);
+        const data = await res.json().catch(() => ({}));
+        toast.error(data.error || `Failed to ${editingId ? 'update' : 'create'} game`);
       }
     } catch (err) {
       console.error(err);
-      alert(`Error ${editingId ? 'updating' : 'creating'} game`);
+      toast.error(`Error ${editingId ? 'updating' : 'creating'} game`);
     } finally {
       setIsSubmitting(false);
     }
@@ -79,13 +83,15 @@ export default function GameForm({ initialGames }: { initialGames: Game[] }) {
       const res = await fetch(`/api/admin/games/${id}`, { method: 'DELETE' });
       if (res.ok) {
         setGames(games.filter(g => g.id !== id));
+        toast.success('Game deleted successfully');
         router.refresh();
       } else {
-        alert('Failed to delete game');
+        const data = await res.json().catch(() => ({}));
+        toast.error(data.error || 'Failed to delete game');
       }
     } catch (err) {
       console.error(err);
-      alert('Error deleting game');
+      toast.error('Error deleting game');
     }
   };
 
