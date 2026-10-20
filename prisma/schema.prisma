@@ -64,21 +64,32 @@ model VerificationToken {
 }
 
 model Game {
-  id          String   @id @default(cuid())
-  slug        String   @unique
-  title       String
-  description String
-  imageUrl    String?
-  developer   String
-  chapters    StoryChapter[]
-  reviews     Review[]
-  favoritedBy FavoriteGame[]
-  userStatuses UserGameStatus[]
-  characters  Character[]
-  averageScore Float    @default(0.0)
-  isEditorsPick Boolean @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  title         String
+  description   String
+  imageUrl      String?
+  bannerUrl     String?  // 16:9 Landscape / Banner Artwork
+  developer     String
+  isEditorsPick Boolean  @default(false)
+  averageScore  Float    @default(0.0)
+  genres        Genre[]
+  chapters      StoryChapter[]
+  reviews       Review[]
+  favoritedBy   FavoriteGame[]
+  userStatuses  UserGameStatus[]
+  characters    Character[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Genre {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  games     Game[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model StoryChapter {
@@ -92,14 +103,16 @@ model StoryChapter {
   category    String   @default("Main Story")
   isMain      Boolean  @default(false)
   releaseDate DateTime?
-  chapterCode String?
-  chapterType String   @default("MAIN")
+  chapterCode String?  // e.g. "S1.E1", "EX-02"
+  chapterType String   @default("MAIN") // MAIN, EXTRA, EVENT, CHARACTER
   game        Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
   reviews     Review[]
+  characters  Character[] // Featured characters in this chapter
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@unique([gameId, slug])
+  @@index([gameId])
 }
 
 model Review {
@@ -118,6 +131,9 @@ model Review {
   updatedAt   DateTime @updatedAt
 
   @@unique([userId, chapterId])
+  @@index([gameId])
+  @@index([chapterId])
+  @@index([userId])
 }
 
 model Upvote {
@@ -129,6 +145,8 @@ model Upvote {
   createdAt DateTime @default(now())
 
   @@unique([userId, reviewId])
+  @@index([reviewId])
+  @@index([userId])
 }
 
 model FavoriteGame {
@@ -140,6 +158,8 @@ model FavoriteGame {
   createdAt DateTime @default(now())
 
   @@unique([userId, gameId])
+  @@index([userId])
+  @@index([gameId])
 }
 
 enum GameStatus {
@@ -160,6 +180,8 @@ model UserGameStatus {
   updatedAt DateTime   @updatedAt
 
   @@unique([userId, gameId])
+  @@index([userId])
+  @@index([gameId])
 }
 
 model Character {
@@ -167,10 +189,16 @@ model Character {
   gameId      String
   name        String
   lore        String
-  imageUrl    String?
+  imageUrl    String?  // Full Splash Art / Character Portrait
+  avatarUrl   String?  // 2D In-Game Profile Picture (1x1 square / circle)
   voiceActorEN String?
   voiceActorJP String?
+  isMain        Boolean  @default(false)
+  releaseDate   DateTime?
   game        Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  chapters    StoryChapter[] // Chapters this character appears in
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  
+  @@index([gameId])
 }

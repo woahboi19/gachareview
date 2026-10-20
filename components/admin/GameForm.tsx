@@ -10,6 +10,9 @@ interface Game {
   description: string;
   developer: string;
   imageUrl: string | null;
+  bannerUrl?: string | null;
+  isEditorsPick?: boolean;
+  genres?: { name: string }[];
 }
 
 export default function GameForm({ initialGames }: { initialGames: Game[] }) {
@@ -18,6 +21,9 @@ export default function GameForm({ initialGames }: { initialGames: Game[] }) {
   const [description, setDescription] = useState('');
   const [developer, setDeveloper] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [bannerUrl, setBannerUrl] = useState('');
+  const [isEditorsPick, setIsEditorsPick] = useState(false);
+  const [genreNames, setGenreNames] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -33,7 +39,7 @@ export default function GameForm({ initialGames }: { initialGames: Game[] }) {
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, description, developer, imageUrl })
+        body: JSON.stringify({ title, description, developer, imageUrl, bannerUrl, isEditorsPick, genreNames })
       });
 
       if (res.ok) {
@@ -65,6 +71,9 @@ export default function GameForm({ initialGames }: { initialGames: Game[] }) {
     setDescription('');
     setDeveloper('');
     setImageUrl('');
+    setBannerUrl('');
+    setIsEditorsPick(false);
+    setGenreNames('');
   };
 
   const startEdit = (game: Game) => {
@@ -73,6 +82,9 @@ export default function GameForm({ initialGames }: { initialGames: Game[] }) {
     setDescription(game.description);
     setDeveloper(game.developer);
     setImageUrl(game.imageUrl || '');
+    setBannerUrl(game.bannerUrl || '');
+    setIsEditorsPick(game.isEditorsPick || false);
+    setGenreNames(game.genres ? game.genres.map(g => g.name).join(', ') : '');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -118,8 +130,20 @@ export default function GameForm({ initialGames }: { initialGames: Game[] }) {
             <input type="text" className="form-textarea" style={{ minHeight: '40px' }} value={developer} onChange={e => setDeveloper(e.target.value)} required />
           </div>
           <div className="form-group">
-            <label className="form-label">Image URL (e.g. /images/genshin.webp)</label>
-            <input type="text" className="form-textarea" style={{ minHeight: '40px' }} value={imageUrl} onChange={e => setImageUrl(e.target.value)} />
+            <label className="form-label">Cover Image URL (3:4 Vertical / Poster)</label>
+            <input type="text" className="form-textarea" style={{ minHeight: '40px' }} value={imageUrl} onChange={e => setImageUrl(e.target.value)} placeholder="https://images.igdb.com/igdb/image/upload/t_1080p/..." />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Banner Image URL (16:9 Landscape / Artwork)</label>
+            <input type="text" className="form-textarea" style={{ minHeight: '40px' }} value={bannerUrl} onChange={e => setBannerUrl(e.target.value)} placeholder="https://... 16:9 Landscape Banner" />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Genres (Comma separated)</label>
+            <input type="text" className="form-textarea" style={{ minHeight: '40px' }} placeholder="Action RPG, Strategy" value={genreNames} onChange={e => setGenreNames(e.target.value)} />
+          </div>
+          <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <input type="checkbox" id="isEditorsPick" checked={isEditorsPick} onChange={e => setIsEditorsPick(e.target.checked)} />
+            <label htmlFor="isEditorsPick" className="form-label" style={{ margin: 0, cursor: 'pointer' }}>Editor&apos;s Pick 🏆</label>
           </div>
           <div className="form-group">
             <label className="form-label">Description</label>

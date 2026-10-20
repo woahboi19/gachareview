@@ -50,3 +50,6 @@ next-env.d.ts
 # backup and scratch scripts
 backup.json
 scratch/
+
+# agent skills
+/.agent

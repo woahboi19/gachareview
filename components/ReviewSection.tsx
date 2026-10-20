@@ -23,12 +23,13 @@ interface Review {
 }
 
 interface ReviewSectionProps {
-  chapterId: string;
+  chapterId?: string;
+  gameId?: string;
   initialReviews: Review[];
   session: Session | null;
 }
 
-export default function ReviewSection({ chapterId, initialReviews, session }: ReviewSectionProps) {
+export default function ReviewSection({ chapterId, gameId, initialReviews, session }: ReviewSectionProps) {
   const [reviews, setReviews] = useState<Review[]>(initialReviews);
   
   // Create state
@@ -85,7 +86,7 @@ export default function ReviewSection({ chapterId, initialReviews, session }: Re
       const res = await fetch('/api/reviews', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chapterId, rating, content, isSpoiler })
+        body: JSON.stringify({ chapterId, gameId, rating, content, isSpoiler })
       });
 
       if (res.ok) {
