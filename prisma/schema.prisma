@@ -64,32 +64,21 @@ model VerificationToken {
 }
 
 model Game {
-  id            String   @id @default(cuid())
-  slug          String   @unique
-  title         String
-  description   String
-  imageUrl      String?
-  bannerUrl     String?  // 16:9 Landscape / Banner Artwork
-  developer     String
-  isEditorsPick Boolean  @default(false)
-  averageScore  Float    @default(0.0)
-  genres        Genre[]
-  chapters      StoryChapter[]
-  reviews       Review[]
-  favoritedBy   FavoriteGame[]
-  userStatuses  UserGameStatus[]
-  characters    Character[]
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-}
-
-model Genre {
-  id        String   @id @default(cuid())
-  name      String   @unique
-  slug      String   @unique
-  games     Game[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  description String
+  imageUrl    String?
+  developer   String
+  chapters    StoryChapter[]
+  reviews     Review[]
+  favoritedBy FavoriteGame[]
+  userStatuses UserGameStatus[]
+  characters  Character[]
+  averageScore Float    @default(0.0)
+  isEditorsPick Boolean @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model StoryChapter {
@@ -105,6 +94,8 @@ model StoryChapter {
   chapterCode String?  // e.g. "S1.E1", "EX-02"
   isMain      Boolean  @default(false)
   releaseDate DateTime?
+  chapterCode String?
+  chapterType String   @default("MAIN")
   game        Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
   reviews     Review[]
   characters  Character[] // Featured characters in this chapter
