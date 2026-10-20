@@ -101,10 +101,10 @@ model StoryChapter {
   summary     String
   imageUrl    String?  // Optional image for the chapter
   category    String   @default("Main Story")
-  chapterType String   @default("MAIN") // MAIN, EXTRA, EVENT, CHARACTER
-  chapterCode String?  // e.g. "S1.E1", "EX-02"
   isMain      Boolean  @default(false)
   releaseDate DateTime?
+  chapterCode String?  // e.g. "S1.E1", "EX-02"
+  chapterType String   @default("MAIN") // MAIN, EXTRA, EVENT, CHARACTER
   game        Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
   reviews     Review[]
   characters  Character[] // Featured characters in this chapter
