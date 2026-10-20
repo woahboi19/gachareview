@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 interface Game {
   id: string;
@@ -9,6 +10,7 @@ interface Game {
   description: string;
   developer: string;
   imageUrl: string | null;
+  bannerUrl?: string | null;
   isEditorsPick?: boolean;
   genres?: { name: string }[];
 }
@@ -19,6 +21,7 @@ export default function GameForm({ initialGames }: { initialGames: Game[] }) {
   const [description, setDescription] = useState('');
   const [developer, setDeveloper] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [bannerUrl, setBannerUrl] = useState('');
   const [isEditorsPick, setIsEditorsPick] = useState(false);
   const [genreNames, setGenreNames] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -36,24 +39,27 @@ export default function GameForm({ initialGames }: { initialGames: Game[] }) {
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, description, developer, imageUrl, isEditorsPick, genreNames })
+        body: JSON.stringify({ title, description, developer, imageUrl, bannerUrl, isEditorsPick, genreNames })
       });
 
       if (res.ok) {
         const savedGame = await res.json();
         if (editingId) {
           setGames(games.map(g => g.id === editingId ? savedGame : g));
+          toast.success('Game updated successfully!');
         } else {
           setGames([savedGame, ...games]);
+          toast.success('Game added successfully!');
         }
         resetForm();
         router.refresh();
       } else {
-        alert(`Failed to ${editingId ? 'update' : 'create'} game`);
+        const data = await res.json().catch(() => ({}));
+        toast.error(data.error || `Failed to ${editingId ? 'update' : 'create'} game`);
       }
     } catch (err) {
       console.error(err);
-      alert(`Error ${editingId ? 'updating' : 'creating'} game`);
+      toast.error(`Error ${editingId ? 'updating' : 'creating'} game`);
     } finally {
       setIsSubmitting(false);
     }
@@ -65,6 +71,7 @@ export default function GameForm({ initialGames }: { initialGames: Game[] }) {
     setDescription('');
     setDeveloper('');
     setImageUrl('');
+    setBannerUrl('');
     setIsEditorsPick(false);
     setGenreNames('');
   };
@@ -75,6 +82,7 @@ export default function GameForm({ initialGames }: { initialGames: Game[] }) {
     setDescription(game.description);
     setDeveloper(game.developer);
     setImageUrl(game.imageUrl || '');
+    setBannerUrl(game.bannerUrl || '');
     setIsEditorsPick(game.isEditorsPick || false);
     setGenreNames(game.genres ? game.genres.map(g => g.name).join(', ') : '');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -87,13 +95,15 @@ export default function GameForm({ initialGames }: { initialGames: Game[] }) {
       const res = await fetch(`/api/admin/games/${id}`, { method: 'DELETE' });
       if (res.ok) {
         setGames(games.filter(g => g.id !== id));
+        toast.success('Game deleted successfully');
         router.refresh();
       } else {
-        alert('Failed to delete game');
+        const data = await res.json().catch(() => ({}));
+        toast.error(data.error || 'Failed to delete game');
       }
     } catch (err) {
       console.error(err);
-      alert('Error deleting game');
+      toast.error('Error deleting game');
     }
   };
 
@@ -120,8 +130,12 @@ export default function GameForm({ initialGames }: { initialGames: Game[] }) {
             <input type="text" className="form-textarea" style={{ minHeight: '40px' }} value={developer} onChange={e => setDeveloper(e.target.value)} required />
           </div>
           <div className="form-group">
-            <label className="form-label">Image URL (e.g. /images/genshin.webp)</label>
-            <input type="text" className="form-textarea" style={{ minHeight: '40px' }} value={imageUrl} onChange={e => setImageUrl(e.target.value)} />
+            <label className="form-label">Cover Image URL (3:4 Vertical / Poster)</label>
+            <input type="text" className="form-textarea" style={{ minHeight: '40px' }} value={imageUrl} onChange={e => setImageUrl(e.target.value)} placeholder="https://images.igdb.com/igdb/image/upload/t_1080p/..." />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Banner Image URL (16:9 Landscape / Artwork)</label>
+            <input type="text" className="form-textarea" style={{ minHeight: '40px' }} value={bannerUrl} onChange={e => setBannerUrl(e.target.value)} placeholder="https://... 16:9 Landscape Banner" />
           </div>
           <div className="form-group">
             <label className="form-label">Genres (Comma separated)</label>

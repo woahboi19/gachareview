@@ -37,7 +37,7 @@ export async function PUT(
 
     const { id } = await params;
     const body = await request.json();
-    const { title, description, developer, imageUrl, isEditorsPick, genreNames } = body;
+    const { title, description, developer, imageUrl, bannerUrl, isEditorsPick, genreNames } = body;
 
     if (!title || !description || !developer) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -60,6 +60,7 @@ export async function PUT(
         description,
         developer,
         imageUrl: imageUrl || null,
+        bannerUrl: bannerUrl || null,
         isEditorsPick: !!isEditorsPick,
         genres: {
           set: [],

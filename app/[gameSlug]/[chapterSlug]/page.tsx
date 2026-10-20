@@ -117,18 +117,36 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
         <div style={{ marginTop: '2rem', paddingBottom: '1rem', borderBottom: '1px solid var(--color-surface-border)' }}>
           <h3 style={{ fontSize: '1.3rem', fontWeight: 600, marginBottom: '1rem', color: 'var(--color-primary)' }}>Featured Characters</h3>
           <div style={{ display: 'flex', gap: '1rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
-            {chapter.characters.map((char: any) => (
-              <div key={char.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '80px' }}>
-                <div style={{ width: '60px', height: '60px', borderRadius: '50%', overflow: 'hidden', position: 'relative', border: '2px solid var(--color-surface-border)' }}>
-                  {char.imageUrl ? (
-                    <Image src={char.imageUrl} alt={char.name} fill style={{ objectFit: 'cover', objectPosition: 'top' }} sizes="60px" />
-                  ) : (
-                    <div style={{ width: '100%', height: '100%', background: 'var(--color-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem' }}>No Img</div>
-                  )}
+            {chapter.characters.map((char) => {
+              const displayImg = char.avatarUrl || char.imageUrl;
+              return (
+                <div key={char.id} title={char.name} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '84px', flexShrink: 0 }}>
+                  <div style={{ width: '60px', height: '60px', borderRadius: '50%', overflow: 'hidden', position: 'relative', border: '2px solid var(--color-surface-border)', background: 'var(--color-surface)', boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}>
+                    {displayImg ? (
+                      <Image src={displayImg} alt={char.name} fill style={{ objectFit: 'cover', objectPosition: 'center' }} sizes="60px" />
+                    ) : (
+                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem' }}>No Img</div>
+                    )}
+                  </div>
+                  <span style={{ 
+                    fontSize: '0.78rem', 
+                    marginTop: '0.45rem', 
+                    textAlign: 'center', 
+                    width: '100%', 
+                    lineHeight: '1.25', 
+                    display: '-webkit-box', 
+                    WebkitLineClamp: 2, 
+                    WebkitBoxOrient: 'vertical', 
+                    overflow: 'hidden', 
+                    wordBreak: 'break-word',
+                    color: 'var(--color-text-main)',
+                    fontWeight: 500
+                  }}>
+                    {char.name}
+                  </span>
                 </div>
-                <span style={{ fontSize: '0.8rem', marginTop: '0.5rem', textAlign: 'center', maxWidth: '80px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{char.name}</span>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}

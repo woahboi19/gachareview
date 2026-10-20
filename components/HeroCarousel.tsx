@@ -104,14 +104,28 @@ export default function HeroCarousel({ chapters }: HeroCarouselProps) {
               
               {/* Contained Image Layer */}
               <div className="carousel-image">
-                <Image 
-                  src={bgImage} 
-                  alt={chapter.title} 
+                {/* Ambient backdrop: blurred, oversized copy hides any resolution gaps */}
+                <Image
+                  src={bgImage}
+                  alt=""
+                  aria-hidden="true"
                   fill
-                  priority={true}
-                  sizes="(max-width: 768px) 100vw, 80vw"
-                  style={{ objectFit: 'cover', objectPosition: 'center center' }} 
+                  quality={30}
+                  sizes="200px"
+                  className="carousel-image-bg"
+                  style={{ objectFit: 'cover' }}
                 />
+                {/* Foreground: never cropped or upscaled-to-fill, so it stays crisp */}
+                <div className="carousel-image-fg">
+                  <Image 
+                    src={bgImage} 
+                    alt={chapter.title} 
+                    fill
+                    priority={true}
+                    sizes="(max-width: 768px) 100vw, 60vw"
+                    style={{ objectFit: 'contain', objectPosition: 'center center' }} 
+                  />
+                </div>
               </div>
 
               {/* Main Content Window */}

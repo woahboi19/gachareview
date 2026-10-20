@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidateTag } from 'next/cache';
+import { Prisma } from '@prisma/client';
 import { prisma } from '../../../../../lib/prisma';
 import { auth } from '../../../../../auth';
 
@@ -50,7 +51,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    const chapterData: any = {
+    const chapterData: Prisma.StoryChapterUncheckedUpdateInput = {
       gameId,
       title,
       chapterNum: parseInt(chapterNum),

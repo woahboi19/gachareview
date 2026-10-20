@@ -19,7 +19,6 @@ export default function GameCard({ slug, title, description, imageUrl, score, ge
         {imageUrl && (
           <div style={{ width: '100%', aspectRatio: '3/4', overflow: 'hidden', background: '#050505', display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
             <Image src={imageUrl} alt={title} fill sizes="(max-width: 768px) 100vw, 300px" className="gamecard-img" style={{ objectFit: 'cover', objectPosition: 'center', transition: 'transform 0.4s ease' }} />
-            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '60%', background: 'linear-gradient(to top, rgba(13,13,13,1) 0%, transparent 100%)', pointerEvents: 'none' }} />
             
             {/* Top Badges */}
             <div style={{ position: 'absolute', top: '0.75rem', left: '0.75rem', right: '0.75rem', display: 'flex', justifyContent: 'space-between', zIndex: 10 }}>

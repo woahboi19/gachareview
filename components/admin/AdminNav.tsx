@@ -44,6 +44,13 @@ export default function AdminNav() {
           Manage Characters
         </div>
       </Link>
+      <div style={{ marginTop: 'auto', paddingTop: '1.5rem', borderTop: '1px solid var(--color-surface-border)' }}>
+        <Link href="/" style={{ textDecoration: 'none' }}>
+          <div style={{ padding: '0.6rem 1rem', borderRadius: '8px', color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', transition: 'color 0.2s' }}>
+            ← Back to Site
+          </div>
+        </Link>
+      </div>
     </nav>
   );
 }

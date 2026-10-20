@@ -69,6 +69,7 @@ model Game {
   title         String
   description   String
   imageUrl      String?
+  bannerUrl     String?  // 16:9 Landscape / Banner Artwork
   developer     String
   isEditorsPick Boolean  @default(false)
   averageScore  Float    @default(0.0)
@@ -188,9 +189,12 @@ model Character {
   gameId      String
   name        String
   lore        String
-  imageUrl    String?
+  imageUrl    String?  // Full Splash Art / Character Portrait
+  avatarUrl   String?  // 2D In-Game Profile Picture (1x1 square / circle)
   voiceActorEN String?
   voiceActorJP String?
+  isMain        Boolean  @default(false)
+  releaseDate   DateTime?
   game        Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
   chapters    StoryChapter[] // Chapters this character appears in
   createdAt   DateTime @default(now())

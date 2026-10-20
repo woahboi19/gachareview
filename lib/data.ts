@@ -1,6 +1,8 @@
 import { unstable_cache } from 'next/cache';
 import { prisma } from './prisma';
 
+const REVALIDATE_TIME = process.env.NODE_ENV === 'development' ? 5 : 3600;
+
 export const getCachedAllGenres = unstable_cache(
   async () => {
     return await prisma.genre.findMany({
@@ -8,19 +10,19 @@ export const getCachedAllGenres = unstable_cache(
     });
   },
   ['all-genres'],
-  { tags: ['genres'], revalidate: 3600 }
+  { tags: ['genres'], revalidate: REVALIDATE_TIME }
 );
 
 export const getCachedPopularGames = unstable_cache(
   async () => {
     return await prisma.game.findMany({
-      take: 5,
+      take: 8,
       orderBy: { favoritedBy: { _count: 'desc' } },
       include: { genres: true }
     });
   },
   ['popular-games'],
-  { tags: ['games'], revalidate: 3600 }
+  { tags: ['games'], revalidate: REVALIDATE_TIME }
 );
 
 export const getCachedAllGames = unstable_cache(
@@ -31,7 +33,7 @@ export const getCachedAllGames = unstable_cache(
     });
   },
   ['all-games'],
-  { tags: ['games'], revalidate: 3600 }
+  { tags: ['games'], revalidate: REVALIDATE_TIME }
 );
 
 export const getCachedRecentChapters = unstable_cache(
@@ -39,12 +41,12 @@ export const getCachedRecentChapters = unstable_cache(
     return await prisma.storyChapter.findMany({
       where: { releaseDate: { not: null, lte: new Date() } },
       orderBy: { releaseDate: 'desc' },
-      take: 6,
+      take: 8,
       include: { game: true }
     });
   },
   ['recent-chapters'],
-  { tags: ['chapters', 'games'], revalidate: 3600 }
+  { tags: ['chapters', 'games'], revalidate: REVALIDATE_TIME }
 );
 
 export const getCachedUpcomingChapters = unstable_cache(
@@ -52,49 +54,49 @@ export const getCachedUpcomingChapters = unstable_cache(
     return await prisma.storyChapter.findMany({
       where: { releaseDate: { not: null, gt: new Date() } },
       orderBy: { releaseDate: 'asc' },
-      take: 6,
+      take: 8,
       include: { game: true }
     });
   },
   ['upcoming-chapters'],
-  { tags: ['chapters', 'games'], revalidate: 3600 }
+  { tags: ['chapters', 'games'], revalidate: REVALIDATE_TIME }
 );
 
 export const getCachedTrendingGames = unstable_cache(
   async () => {
     return await prisma.game.findMany({
-      take: 4,
+      take: 8,
       orderBy: { favoritedBy: { _count: 'desc' } },
       include: { genres: true }
     });
   },
   ['trending-games'],
-  { tags: ['games'], revalidate: 3600 }
+  { tags: ['games'], revalidate: REVALIDATE_TIME }
 );
 
 export const getCachedEditorsPicks = unstable_cache(
   async () => {
     return await prisma.game.findMany({
       where: { isEditorsPick: true },
-      take: 4,
+      take: 8,
       orderBy: { createdAt: 'desc' },
       include: { genres: true }
     });
   },
   ['editors-picks'],
-  { tags: ['games'], revalidate: 3600 }
+  { tags: ['games'], revalidate: REVALIDATE_TIME }
 );
 
 export const getCachedHighestRated = unstable_cache(
   async () => {
     return await prisma.game.findMany({
-      take: 4,
+      take: 8,
       orderBy: { averageScore: 'desc' },
       include: { genres: true }
     });
   },
   ['highest-rated'],
-  { tags: ['games'], revalidate: 3600 }
+  { tags: ['games'], revalidate: REVALIDATE_TIME }
 );
 
 export const getCachedGameBySlug = (gameSlug: string) => {
@@ -113,15 +115,29 @@ export const getCachedGameBySlug = (gameSlug: string) => {
           chapters: {
             orderBy: [{ releaseDate: 'asc' }, { chapterNum: 'asc' }],
             include: {
-              reviews: true
+              reviews: true,
+              characters: {
+                select: {
+                  id: true,
+                  name: true,
+                  avatarUrl: true,
+                  imageUrl: true
+                }
+              }
             }
           },
-          characters: true
+          characters: {
+            orderBy: [
+              { isMain: 'desc' },
+              { releaseDate: 'asc' },
+              { name: 'asc' }
+            ]
+          }
         }
       });
     },
     [`game-details-slug-${gameSlug}`],
-    { tags: ['game-details', `game-${gameSlug}`], revalidate: 3600 }
+    { tags: ['game-details', `game-${gameSlug}`], revalidate: REVALIDATE_TIME }
   )();
 };
 
@@ -146,7 +162,7 @@ export const getCachedChapterBySlug = (gameSlug: string, chapterSlug: string) =>
       });
     },
     [`chapter-details-slug-${gameSlug}-${chapterSlug}`],
-    { tags: ['chapter-details', `chapter-${gameSlug}-${chapterSlug}`], revalidate: 3600 }
+    { tags: ['chapter-details', `chapter-${gameSlug}-${chapterSlug}`], revalidate: REVALIDATE_TIME }
   )();
 };
 
@@ -159,7 +175,7 @@ export const getCachedTopReviews = unstable_cache(
     });
   },
   ['top-reviews'],
-  { tags: ['reviews'], revalidate: 3600 }
+  { tags: ['reviews'], revalidate: REVALIDATE_TIME }
 );
 
 export const getCachedTopUsers = unstable_cache(
@@ -171,5 +187,5 @@ export const getCachedTopUsers = unstable_cache(
     });
   },
   ['top-users'],
-  { tags: ['users'], revalidate: 3600 }
+  { tags: ['users'], revalidate: REVALIDATE_TIME }
 );
